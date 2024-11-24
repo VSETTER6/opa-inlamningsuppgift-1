@@ -30,6 +30,30 @@ namespace Infrastructure.Database
             return bookModelList;
         }
 
+        public BookModel GetBookById(int id)
+        {
+            return bookModelList.FirstOrDefault(book => book.Id == id);
+        }
+
+        public void AddBook(BookModel newBook)
+        {
+            bookModelList.Add(newBook);
+        }
+
+        public void DeleteBook(int id)
+        {
+            var bookToDelete = bookModelList.FirstOrDefault(book => book.Id == id);
+
+            if (bookToDelete != null)
+            {
+                bookModelList.Remove(bookToDelete);
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            }
+        }
+
         public List<AuthorModel> GetAllAuthors()
         {
             return authorModelList;
