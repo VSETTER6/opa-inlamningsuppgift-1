@@ -11,8 +11,15 @@
     <Folder Include="Author\Handlers\" />
     <Folder Include="Author\Queries\" />
     <Folder Include="Book\Commands\" />
-    <Folder Include="Book\Handlers\" />
-    <Folder Include="Book\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
