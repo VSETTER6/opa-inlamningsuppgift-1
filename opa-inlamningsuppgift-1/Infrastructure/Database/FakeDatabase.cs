@@ -54,6 +54,24 @@ namespace Infrastructure.Database
             }
         }
 
+        public void UpdateBook(BookModel updatedBook)
+        {
+            var bookToUpdate = bookModelList.FirstOrDefault(book => book.Id == updatedBook.Id);
+
+            if (bookToUpdate == null)
+            {
+                throw new KeyNotFoundException($"Book with ID {updatedBook.Id} not found.");
+            }
+
+            if (string.IsNullOrWhiteSpace(updatedBook.Title) || string.IsNullOrWhiteSpace(updatedBook.Description))
+            {
+                throw new ArgumentException("Title and description cannot be empty.");
+            }
+
+            bookToUpdate.Title = updatedBook.Title;
+            bookToUpdate.Description = updatedBook.Description;
+        }
+
         public List<AuthorModel> GetAllAuthors()
         {
             return authorModelList;

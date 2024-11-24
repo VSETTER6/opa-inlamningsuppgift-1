@@ -13,6 +13,7 @@ namespace Infrastructure.Database
         BookModel GetBookById(int id);
         void AddBook(BookModel newBook);
         void DeleteBook(int id);
+        void UpdateBook(BookModel updatedBook);
 
         List<AuthorModel> GetAllAuthors();
     }
