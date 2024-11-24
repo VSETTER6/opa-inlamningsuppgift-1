@@ -50,8 +50,14 @@ namespace API.Controllers
 
         // PUT api/<BookModelController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<BookModel> UpdateBook(int id, [FromBody] UpdateBookCommand command)
         {
+            if (id != command.id)
+            {
+                throw new ArgumentException("ID in the route does not match ID in the body.");
+            }
+
+            return await _mediator.Send(command);
         }
 
         // DELETE api/<BookModelController>/5

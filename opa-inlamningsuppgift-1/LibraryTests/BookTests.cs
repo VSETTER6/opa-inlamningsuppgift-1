@@ -170,4 +170,44 @@ public class BookTests
             Assert.That(exception.Message, Is.EqualTo($"Book with ID {id} not found."));
         }
     }
+
+    [Test]
+    [TestCase(1, "Updated Title", "Updated Description")]
+    public async Task UpdateBookHandler_ShouldUpdateBook_WhenValidRequestIsGiven(int id, string newTitle, string newDescription)
+    {
+        // Arrange
+        var mockDatabase = new Mock<IFakeDatabase>();
+        var mockBooks = new List<BookModel>
+        {
+            new BookModel { Id = 1, Title = "Original Title", Description = "Original Description" },
+            new BookModel { Id = 2, Title = "Another Title", Description = "Another Description" }
+        };
+
+        mockDatabase.Setup(database => database.GetBookById(It.IsAny<int>()))
+                    .Returns((int bookId) => mockBooks.FirstOrDefault(book => book.Id == bookId));
+
+        mockDatabase.Setup(datebase => datebase.UpdateBook(It.IsAny<BookModel>()))
+                    .Callback<BookModel>(updatedBook =>
+                    {
+                        var bookToUpdate = mockBooks.FirstOrDefault(book => book.Id == updatedBook.Id);
+                        if (bookToUpdate != null)
+                        {
+                            bookToUpdate.Title = updatedBook.Title;
+                            bookToUpdate.Description = updatedBook.Description;
+                        }
+                    });
+
+        var handler = new UpdateBookHandler(mockDatabase.Object);
+        var command = new UpdateBookCommand(id, newTitle, newDescription);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        var updatedBook = mockBooks.FirstOrDefault(book => book.Id == id);
+        Assert.NotNull(result);
+        Assert.AreEqual(newTitle, updatedBook.Title);
+        Assert.AreEqual(newDescription, updatedBook.Description);
+    }
+
 }
