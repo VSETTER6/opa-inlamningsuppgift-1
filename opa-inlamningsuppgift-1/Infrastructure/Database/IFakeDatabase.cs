@@ -10,6 +10,9 @@ namespace Infrastructure.Database
     public interface IFakeDatabase
     {
         List<BookModel> GetAllBooks();
+        BookModel GetBookById(int id);
+        void AddBook(BookModel newBook);
+        void DeleteBook(int id);
 
         List<AuthorModel> GetAllAuthors();
     }

@@ -10,7 +10,6 @@
     <Folder Include="Author\Commands\" />
     <Folder Include="Author\Handlers\" />
     <Folder Include="Author\Queries\" />
-    <Folder Include="Book\Commands\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using Application.Book.Queries;
+﻿using Application.Book.Commands;
+using Application.Book.Queries;
 using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,16 +28,25 @@ namespace API.Controllers
 
         // GET api/<BookModelController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<BookModel> Get(int id)
         {
-            return "value";
+            return await _mediator.Send(new GetBookByIdQuery(id));
         }
 
         // POST api/<BookModelController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
         {
+            var result = await _mediator.Send(command);
+
+            if (result == null)
+            {
+                return BadRequest("Failed to add book.");
+            }
+
+            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
+
 
         // PUT api/<BookModelController>/5
         [HttpPut("{id}")]
@@ -46,8 +56,9 @@ namespace API.Controllers
 
         // DELETE api/<BookModelController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<bool> DeleteBook(int id)
         {
+            return await _mediator.Send(new DeleteBookCommand(id));
         }
     }
 }
