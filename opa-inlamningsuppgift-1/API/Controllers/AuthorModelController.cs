@@ -1,7 +1,5 @@
 ﻿using Application.Author.Commands;
 using Application.Author.Queries;
-using Application.Book.Commands;
-using Application.Book.Queries;
 using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

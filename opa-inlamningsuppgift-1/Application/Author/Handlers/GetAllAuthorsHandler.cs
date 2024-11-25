@@ -1,5 +1,4 @@
 ﻿using Application.Author.Queries;
-using Application.Book.Queries;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
