@@ -16,5 +16,9 @@ namespace Infrastructure.Database
         void UpdateBook(BookModel updatedBook);
 
         List<AuthorModel> GetAllAuthors();
+        AuthorModel GetAuthorById(int id);
+        void AddAuthor(AuthorModel newAuthor);
+        void DeleteAuthor(int id);
+        void UpdateAuthor(AuthorModel updatedAuthor);
     }
 }

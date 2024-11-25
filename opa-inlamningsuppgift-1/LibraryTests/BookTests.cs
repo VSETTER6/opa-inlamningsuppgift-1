@@ -21,13 +21,13 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
-        var mockBooks = new List<BookModel>
+        var mockBooksList = new List<BookModel>
         {
             new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1"},
             new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2"}
         };
 
-        mockDatabase.Setup(datebase => datebase.GetAllBooks()).Returns(mockBooks);
+        mockDatabase.Setup(datebase => datebase.GetAllBooks()).Returns(mockBooksList);
 
         var handler = new GetAllBooksHandler(mockDatabase.Object);
 
@@ -49,14 +49,14 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
-        var mockBooks = new List<BookModel>
+        var mockBooksList = new List<BookModel>
         {
             new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1"},
             new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetBookById(It.IsAny<int>()))
-                    .Returns((int id) => mockBooks.FirstOrDefault(book => book.Id == id));
+                    .Returns((int id) => mockBooksList.FirstOrDefault(book => book.Id == id));
 
         var handler = new GetBookByIdHandler(mockDatabase.Object);
 
@@ -64,7 +64,7 @@ public class BookTests
         var result = await handler.Handle(new GetBookByIdQuery(id), CancellationToken.None);
 
         // Assert
-        var expectedBook = mockBooks.FirstOrDefault(book => book.Id == id);
+        var expectedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
         Assert.NotNull(result);
         Assert.AreEqual(expectedBook, result);
     }
@@ -88,24 +88,24 @@ public class BookTests
     }
 
     [Test]
-    [TestCase("Valid Title", "Valid Description", true)] // Giltig inmatning
-    [TestCase("", "Valid Description", false)]          // Tom titel
-    [TestCase("Valid Title", "", false)]                // Tom beskrivning
-    [TestCase("", "", false)]                           // Både titel och beskrivning tomma
+    [TestCase("Valid Title", "Valid Description", true)]
+    [TestCase("", "Valid Description", false)]          
+    [TestCase("Valid Title", "", false)]                
+    [TestCase("", "", false)]                           
     public async Task AddBookHandler_ShouldHandleAddingBook(string title, string description, bool isValid)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
-        var bookModelList = new List<BookModel>
+        var mockBooksList = new List<BookModel>
     {
         new BookModel { Id = 1, Title = "Book 1", Description = "Description 1" },
         new BookModel { Id = 2, Title = "Book 2", Description = "Description 2" }
     };
 
-        mockDatabase.Setup(database => database.GetAllBooks()).Returns(bookModelList);
+        mockDatabase.Setup(database => database.GetAllBooks()).Returns(mockBooksList);
         mockDatabase.Setup(database => database.AddBook(It.IsAny<BookModel>()))
-                    .Callback<BookModel>(book => bookModelList.Add(book));
+                    .Callback<BookModel>(book => mockBooksList.Add(book));
 
         var handler = new AddBookHandler(mockDatabase.Object);
         var command = new AddBookCommand(title, description);
@@ -119,7 +119,7 @@ public class BookTests
             Assert.NotNull(result);
             Assert.AreEqual(title, result.Title);
             Assert.AreEqual(description, result.Description);
-            Assert.AreEqual(bookModelList.Count, result.Id);
+            Assert.AreEqual(mockBooksList.Count, result.Id);
         }
         else
         {
@@ -139,15 +139,15 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
-        var mockBooks = new List<BookModel>
+        var mockBooksList = new List<BookModel>
         {
             new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1" },
             new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2" }
         };
 
-        mockDatabase.Setup(database => database.GetAllBooks()).Returns(mockBooks);
+        mockDatabase.Setup(database => database.GetAllBooks()).Returns(mockBooksList);
         mockDatabase.Setup(database => database.DeleteBook(It.IsAny<int>()))
-                    .Callback<int>(bookId => mockBooks.RemoveAll(book => book.Id == bookId));
+                    .Callback<int>(bookId => mockBooksList.RemoveAll(book => book.Id == bookId));
 
         var handler = new DeleteBookHandler(mockDatabase.Object);
 
@@ -159,8 +159,8 @@ public class BookTests
             var result = await handler.Handle(command, CancellationToken.None);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(1, mockBooks.Count); // Kontrollera att bara en bok är kvar
-            Assert.IsNull(mockBooks.FirstOrDefault(book => book.Id == 1)); // Kontrollera att rätt bok togs bort
+            Assert.AreEqual(1, mockBooksList.Count);
+            Assert.IsNull(mockBooksList.FirstOrDefault(book => book.Id == 1));
         }
         else
         {
@@ -177,19 +177,19 @@ public class BookTests
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
-        var mockBooks = new List<BookModel>
+        var mockBooksList = new List<BookModel>
         {
             new BookModel { Id = 1, Title = "Original Title", Description = "Original Description" },
             new BookModel { Id = 2, Title = "Another Title", Description = "Another Description" }
         };
 
         mockDatabase.Setup(database => database.GetBookById(It.IsAny<int>()))
-                    .Returns((int bookId) => mockBooks.FirstOrDefault(book => book.Id == bookId));
+                    .Returns((int bookId) => mockBooksList.FirstOrDefault(book => book.Id == bookId));
 
         mockDatabase.Setup(datebase => datebase.UpdateBook(It.IsAny<BookModel>()))
                     .Callback<BookModel>(updatedBook =>
                     {
-                        var bookToUpdate = mockBooks.FirstOrDefault(book => book.Id == updatedBook.Id);
+                        var bookToUpdate = mockBooksList.FirstOrDefault(book => book.Id == updatedBook.Id);
                         if (bookToUpdate != null)
                         {
                             bookToUpdate.Title = updatedBook.Title;
@@ -204,10 +204,9 @@ public class BookTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var updatedBook = mockBooks.FirstOrDefault(book => book.Id == id);
+        var updatedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
         Assert.NotNull(result);
         Assert.AreEqual(newTitle, updatedBook.Title);
         Assert.AreEqual(newDescription, updatedBook.Description);
     }
-
 }

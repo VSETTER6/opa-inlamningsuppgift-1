@@ -1,4 +1,4 @@
-﻿using Application.Book.Queries;
+﻿using Application.Author.Queries;
 using Domain.Models;
 using Infrastructure.Database;
 using MediatR;
@@ -8,31 +8,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Book.Handlers
+namespace Application.Author.Handlers
 {
-    public class GetBookByIdHandler : IRequestHandler<GetBookByIdQuery, BookModel>
+    public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, AuthorModel>
     {
         private readonly IFakeDatabase _fakeDatabase;
 
-        public GetBookByIdHandler(IFakeDatabase fakeDatabase)
+        public GetAuthorByIdHandler(IFakeDatabase fakeDatabase)
         {
             _fakeDatabase = fakeDatabase;
         }
-
-        public Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
+        public Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
             if (request.id <= 0)
             {
                 throw new ArgumentException("ID must be a positive number.");
             }
 
-            var bookId = _fakeDatabase.GetBookById(request.id);
-            if (bookId == null)
+            var authorId = _fakeDatabase.GetAuthorById(request.id);
+            if (authorId == null)
             {
                 throw new KeyNotFoundException($"No book found with ID = {request.id}");
             }
 
-            return Task.FromResult(bookId);
+            return Task.FromResult(authorId);
         }
     }
 }

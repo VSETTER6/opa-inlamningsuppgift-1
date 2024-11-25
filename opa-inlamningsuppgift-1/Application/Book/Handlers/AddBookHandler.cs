@@ -33,7 +33,6 @@ namespace Application.Book.Handlers
                 Description = request.description
             };
 
-            // Lägg till boken i databasen
             _fakeDatabase.AddBook(newBook);
 
             return newBook;

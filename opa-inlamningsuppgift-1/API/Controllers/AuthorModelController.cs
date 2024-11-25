@@ -1,4 +1,6 @@
-﻿using Application.Book.Commands;
+﻿using Application.Author.Commands;
+using Application.Author.Queries;
+using Application.Book.Commands;
 using Application.Book.Queries;
 using Domain.Models;
 using MediatR;
@@ -10,47 +12,46 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookModelController : ControllerBase
+    public class AuthorModelController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public BookModelController(IMediator mediator)
+        public AuthorModelController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        // GET: api/<BookModelController>
+        // GET: api/<AuthorModelController>
         [HttpGet]
-        public async Task<List<BookModel>> Get()
+        public async Task<List<AuthorModel>> Get()
         {
-            return await _mediator.Send(new GetAllBooksQuery());
+            return await _mediator.Send(new GetAllAuthorsQuery());
         }
 
-        // GET api/<BookModelController>/5
+        // GET api/<AuthorModelController>/5
         [HttpGet("{id}")]
-        public async Task<BookModel> Get(int id)
+        public async Task<AuthorModel> Get(int id)
         {
-            return await _mediator.Send(new GetBookByIdQuery(id));
+            return await _mediator.Send(new GetAuthorByIdQuery(id));
         }
 
-        // POST api/<BookModelController>
+        // POST api/<AuthorModelController>
         [HttpPost]
-        public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
+        public async Task<IActionResult> AddAuthor([FromBody] AddAuthorCommand command)
         {
             var result = await _mediator.Send(command);
 
             if (result == null)
             {
-                return BadRequest("Failed to add book.");
+                return BadRequest("Failed to add author.");
             }
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-
-        // PUT api/<BookModelController>/5
+        // PUT api/<AuthorModelController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromBody] UpdateBookCommand command)
+        public async Task<IActionResult> UpdateAuthor(int id, [FromBody] UpdateAuthorCommand command)
         {
             if (id != command.id)
             {
@@ -68,11 +69,11 @@ namespace API.Controllers
             }
         }
 
-        // DELETE api/<BookModelController>/5
+        // DELETE api/<AuthorModelController>/5
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteBook(int id)
+        public async Task<bool> DeleteAuthor(int id)
         {
-            return await _mediator.Send(new DeleteBookCommand(id));
+            return await _mediator.Send(new DeleteAuthorCommand(id));
         }
     }
 }
