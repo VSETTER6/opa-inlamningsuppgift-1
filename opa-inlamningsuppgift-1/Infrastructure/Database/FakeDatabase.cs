@@ -76,5 +76,48 @@ namespace Infrastructure.Database
         {
             return authorModelList;
         }
+
+        public AuthorModel GetAuthorById(int id)
+        {
+            return authorModelList.FirstOrDefault(author => author.Id == id);
+        }
+
+        public void AddAuthor(AuthorModel newAuthor)
+        {
+            authorModelList.Add(newAuthor);
+        }
+
+        public void DeleteAuthor(int id)
+        {
+            var authorToDelete = bookModelList.FirstOrDefault(author => author.Id == id);
+
+            if (authorToDelete != null)
+            {
+                bookModelList.Remove(authorToDelete);
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Author with ID {id} not found.");
+            }
+        }
+
+        public void UpdateAuthor(AuthorModel updatedAuthor)
+        {
+            var authorToUpdate = bookModelList.FirstOrDefault(author => author.Id == updatedAuthor.Id);
+
+            if (authorToUpdate == null)
+            {
+                throw new KeyNotFoundException($"Author with ID {updatedAuthor.Id} not found.");
+            }
+
+            if (string.IsNullOrWhiteSpace(updatedAuthor.FirstName) || string.IsNullOrWhiteSpace(updatedAuthor.LastName) || string.IsNullOrWhiteSpace(updatedAuthor.Category))
+            {
+                throw new ArgumentException("First name, last name and category cannot be empty.");
+            }
+
+            authorToUpdate.Title = updatedAuthor.FirstName;
+            authorToUpdate.Description = updatedAuthor.LastName;
+            authorToUpdate.Description = updatedAuthor.Category;
+        }
     }
 }
