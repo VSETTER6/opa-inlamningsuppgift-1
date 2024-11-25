@@ -1,8 +1,6 @@
 ﻿using Application.Author.Commands;
 using Application.Author.Handlers;
 using Application.Author.Queries;
-using Application.Book.Commands;
-using Application.Book.Handlers;
 using Domain.Models;
 using Infrastructure.Database;
 using Moq;
