@@ -31,5 +31,12 @@ namespace API.Controllers
         {
             return Ok(await _mediator.Send(new AddNewUserCommand(newUser)));
         }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] UserDto userWantingToLogIn)
+        {
+            return Ok(await _mediator.Send(new LoginUserQuery(userWantingToLogIn)));
+        }
     }
 }
