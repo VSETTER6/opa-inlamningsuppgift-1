@@ -20,5 +20,7 @@ namespace Infrastructure.Database
         void AddAuthor(AuthorModel newAuthor);
         void DeleteAuthor(int id);
         void UpdateAuthor(AuthorModel updatedAuthor);
+
+        List<UserModel> Users { get; set; }
     }
 }

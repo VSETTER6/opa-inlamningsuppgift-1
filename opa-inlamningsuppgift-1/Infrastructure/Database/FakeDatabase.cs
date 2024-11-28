@@ -11,6 +11,7 @@ namespace Infrastructure.Database
     {
         private List<BookModel> bookModelList = new();
         private List<AuthorModel> authorModelList = new();
+        private static List<UserModel> userModelList = new();
 
         public FakeDatabase()
         {
@@ -23,6 +24,10 @@ namespace Infrastructure.Database
             authorModelList.Add(new AuthorModel { Id = 2, FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
             authorModelList.Add(new AuthorModel { Id = 3, FirstName = "Dick", LastName = "Doncaster", Category = "Action" });
             authorModelList.Add(new AuthorModel { Id = 4, FirstName = "Peter", LastName = "Pele", Category = "Fantasy" });
+
+            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Ville" });
+            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Hans" });
+            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Tuva" });
         }
 
         public List<BookModel> GetAllBooks()
@@ -118,6 +123,12 @@ namespace Infrastructure.Database
             authorToUpdate.Title = updatedAuthor.FirstName;
             authorToUpdate.Description = updatedAuthor.LastName;
             authorToUpdate.Description = updatedAuthor.Category;
+        }
+
+        public List<UserModel> Users
+        {
+            get { return userModelList; }
+            set { userModelList = value; }
         }
     }
 }
