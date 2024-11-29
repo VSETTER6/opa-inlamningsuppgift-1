@@ -1,4 +1,5 @@
 ﻿using Application.User.Queries;
+using Application.User.Queries.Helpers;
 using Infrastructure.Database;
 using MediatR;
 using System;
@@ -12,10 +13,12 @@ namespace Application.User.Handlers
     public class LoginUserHandler : IRequestHandler<LoginUserQuery, string>
     {
         private readonly IFakeDatabase _fakeDatabase;
+        private readonly TokenHelper _tokenHelper;
 
-        public LoginUserHandler(IFakeDatabase fakeDatabase)
+        public LoginUserHandler(IFakeDatabase fakeDatabase, TokenHelper tokenHelper)
         {
             _fakeDatabase = fakeDatabase;
+            _tokenHelper = tokenHelper;
         }
 
         public Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
@@ -27,7 +30,7 @@ namespace Application.User.Handlers
                 throw new ArgumentException("Invalid username or password");
             }
 
-            string token = "TOKEN TO RETURN";
+            string token = _tokenHelper.GenerateJwtToken(user);
 
             return Task.FromResult(token);
         }
