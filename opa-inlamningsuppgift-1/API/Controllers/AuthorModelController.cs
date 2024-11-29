@@ -2,6 +2,7 @@
 using Application.Author.Queries;
 using Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,6 +21,7 @@ namespace API.Controllers
         }
 
         // GET: api/<AuthorModelController>
+        [Authorize]
         [HttpGet]
         public async Task<List<AuthorModel>> Get()
         {
