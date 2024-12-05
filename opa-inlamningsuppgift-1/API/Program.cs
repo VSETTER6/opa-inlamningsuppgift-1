@@ -1,4 +1,5 @@
 using Application;
+using Infrastructure;
 using Application.User.Queries.Helpers;
 using Infrastructure.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,8 +17,8 @@ namespace API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddSingleton<IFakeDatabase, FakeDatabase>();
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MediatREntrypoint).Assembly));
+            builder.Services.AddApplication();
+            builder.Services.AddInfrastructure();
             builder.Services.AddScoped<TokenHelper>();
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
