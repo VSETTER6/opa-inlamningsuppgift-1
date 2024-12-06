@@ -1,11 +1,9 @@
 using Application;
 using Infrastructure;
 using Application.User.Queries.Helpers;
-using Infrastructure.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
 
 namespace API
@@ -18,7 +16,7 @@ namespace API
 
             // Add services to the container.
             builder.Services.AddApplication();
-            builder.Services.AddInfrastructure();
+            builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection")!);
             builder.Services.AddScoped<TokenHelper>();
 
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");

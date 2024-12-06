@@ -47,34 +47,55 @@ namespace Infrastructure.Database
 
         public void DeleteBook(int id)
         {
-            var bookToDelete = bookModelList.FirstOrDefault(book => book.Id == id);
+            try
+            {
+                var bookToDelete = bookModelList.FirstOrDefault(book => book.Id == id);
 
-            if (bookToDelete != null)
-            {
+                if (bookToDelete == null)
+                {
+                    throw new KeyNotFoundException($"Book with ID {id} was not found.");
+                }
+
                 bookModelList.Remove(bookToDelete);
+                Console.WriteLine($"Book {bookToDelete} was deleted.");
             }
-            else
+            catch (KeyNotFoundException ex) 
             {
-                throw new KeyNotFoundException($"Book with ID {id} not found.");
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
         public void UpdateBook(BookModel updatedBook)
         {
-            var bookToUpdate = bookModelList.FirstOrDefault(book => book.Id == updatedBook.Id);
-
-            if (bookToUpdate == null)
+            try
             {
-                throw new KeyNotFoundException($"Book with ID {updatedBook.Id} not found.");
-            }
+                var bookToUpdate = bookModelList.FirstOrDefault(book => book.Id == updatedBook.Id);
 
-            if (string.IsNullOrWhiteSpace(updatedBook.Title) || string.IsNullOrWhiteSpace(updatedBook.Description))
-            {
-                throw new ArgumentException("Title and description cannot be empty.");
-            }
+                if (bookToUpdate == null)
+                {
+                    throw new KeyNotFoundException($"Book with ID {updatedBook.Id} not found.");
+                }
 
-            bookToUpdate.Title = updatedBook.Title;
-            bookToUpdate.Description = updatedBook.Description;
+                if (string.IsNullOrWhiteSpace(updatedBook.Title) || string.IsNullOrWhiteSpace(updatedBook.Description))
+                {
+                    throw new ArgumentException("Title and description cannot be empty.");
+                }
+
+                bookToUpdate.Title = updatedBook.Title;
+                bookToUpdate.Description = updatedBook.Description;
+                Console.WriteLine($"Book with ID {updatedBook.Id} was updated successfully.");
+            }
+            catch (Exception ex)
+            { 
+                if(ex is KeyNotFoundException || ex is ArgumentException)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine("Unexpected error: " + ex.Message);
+                }
+            }
         }
 
         public List<AuthorModel> GetAllAuthors()
@@ -94,35 +115,56 @@ namespace Infrastructure.Database
 
         public void DeleteAuthor(int id)
         {
-            var authorToDelete = bookModelList.FirstOrDefault(author => author.Id == id);
+            try
+            {
+                var authorToDelete = authorModelList.FirstOrDefault(author => author.Id == id);
 
-            if (authorToDelete != null)
-            {
-                bookModelList.Remove(authorToDelete);
+                if (authorToDelete == null)
+                {
+                    throw new KeyNotFoundException($"Author with ID {id} was not found.");
+                }
+
+                authorModelList.Remove(authorToDelete);
+                Console.WriteLine($"Author {authorToDelete} was deleted.");
             }
-            else
+            catch (KeyNotFoundException ex)
             {
-                throw new KeyNotFoundException($"Author with ID {id} not found.");
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
         public void UpdateAuthor(AuthorModel updatedAuthor)
         {
-            var authorToUpdate = bookModelList.FirstOrDefault(author => author.Id == updatedAuthor.Id);
-
-            if (authorToUpdate == null)
+            try
             {
-                throw new KeyNotFoundException($"Author with ID {updatedAuthor.Id} not found.");
-            }
+                var authorToUpdate = bookModelList.FirstOrDefault(author => author.Id == updatedAuthor.Id);
 
-            if (string.IsNullOrWhiteSpace(updatedAuthor.FirstName) || string.IsNullOrWhiteSpace(updatedAuthor.LastName) || string.IsNullOrWhiteSpace(updatedAuthor.Category))
+                if (authorToUpdate == null)
+                {
+                    throw new KeyNotFoundException($"Author with ID {updatedAuthor.Id} not found.");
+                }
+
+                if (string.IsNullOrWhiteSpace(updatedAuthor.FirstName) || string.IsNullOrWhiteSpace(updatedAuthor.LastName) || string.IsNullOrWhiteSpace(updatedAuthor.Category))
+                {
+                    throw new ArgumentException("None of first name, last name or category can be empty.");
+                }
+
+                authorToUpdate.Title = updatedAuthor.FirstName;
+                authorToUpdate.Description = updatedAuthor.LastName;
+                authorToUpdate.Description = updatedAuthor.Category;
+                Console.WriteLine($"Author with ID {updatedAuthor.Id} was updated successfully.");
+            } 
+            catch (Exception ex)
             {
-                throw new ArgumentException("First name, last name and category cannot be empty.");
+                if (ex is KeyNotFoundException || ex is ArgumentException)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine("Unexpected error: " + ex.Message);
+                }
             }
-
-            authorToUpdate.Title = updatedAuthor.FirstName;
-            authorToUpdate.Description = updatedAuthor.LastName;
-            authorToUpdate.Description = updatedAuthor.Category;
         }
 
         public List<UserModel> Users
