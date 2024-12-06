@@ -23,14 +23,14 @@ namespace API.Controllers
         // GET: api/<AuthorModelController>
         [Authorize]
         [HttpGet]
-        public async Task<List<AuthorModel>> Get()
+        public async Task<List<AuthorModel>> GetAllAuthors()
         {
             return await _mediator.Send(new GetAllAuthorsQuery());
         }
 
         // GET api/<AuthorModelController>/5
         [HttpGet("{id}")]
-        public async Task<AuthorModel> Get(int id)
+        public async Task<AuthorModel> GetAuthorById(int id)
         {
             return await _mediator.Send(new GetAuthorByIdQuery(id));
         }
@@ -46,7 +46,7 @@ namespace API.Controllers
                 return BadRequest("Failed to add author.");
             }
 
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetAuthorById), new { id = result.Id }, result);
         }
 
         // PUT api/<AuthorModelController>/5
