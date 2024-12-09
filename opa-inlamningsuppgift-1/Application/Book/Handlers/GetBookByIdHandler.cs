@@ -21,15 +21,15 @@ namespace Application.Book.Handlers
 
         public Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.id <= 0)
+            if (request.id == Guid.Empty)
             {
-                throw new ArgumentException("ID must be a positive number.");
+                throw new ArgumentException("ID must be a valid GUID.");
             }
 
             var bookId = _fakeDatabase.GetBookById(request.id);
             if (bookId == null)
             {
-                throw new KeyNotFoundException($"No book found with ID = {request.id}");
+                throw new KeyNotFoundException($"No book found with ID {request.id}.");
             }
 
             return Task.FromResult(bookId);
