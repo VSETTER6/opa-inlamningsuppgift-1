@@ -20,15 +20,15 @@ namespace Application.Author.Handlers
         }
         public Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.id <= 0)
+            if (request.id == Guid.Empty)
             {
-                throw new ArgumentException("ID must be a positive number.");
+                throw new ArgumentException("ID can not be empty.");
             }
 
             var authorId = _fakeDatabase.GetAuthorById(request.id);
             if (authorId == null)
             {
-                throw new KeyNotFoundException($"No book found with ID = {request.id}");
+                throw new KeyNotFoundException($"No author found with ID {request.id}.");
             }
 
             return Task.FromResult(authorId);

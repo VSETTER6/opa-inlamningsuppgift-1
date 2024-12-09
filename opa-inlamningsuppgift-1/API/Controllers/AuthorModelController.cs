@@ -30,7 +30,7 @@ namespace API.Controllers
 
         // GET api/<AuthorModelController>/5
         [HttpGet("{id}")]
-        public async Task<AuthorModel> GetAuthorById(int id)
+        public async Task<AuthorModel> GetAuthorById(Guid id)
         {
             return await _mediator.Send(new GetAuthorByIdQuery(id));
         }
@@ -51,7 +51,7 @@ namespace API.Controllers
 
         // PUT api/<AuthorModelController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAuthor(int id, [FromBody] UpdateAuthorCommand command)
+        public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] UpdateAuthorCommand command)
         {
             if (id != command.id)
             {
@@ -71,7 +71,7 @@ namespace API.Controllers
 
         // DELETE api/<AuthorModelController>/5
         [HttpDelete("{id}")]
-        public async Task<bool> DeleteAuthor(int id)
+        public async Task<bool> DeleteAuthor(Guid id)
         {
             return await _mediator.Send(new DeleteAuthorCommand(id));
         }

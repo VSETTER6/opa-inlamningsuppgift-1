@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Author.Commands
 {
-    public record UpdateAuthorCommand(int id, string firstName, string lastName, string category) : IRequest<AuthorModel>;
+    public record UpdateAuthorCommand(Guid id, string firstName, string lastName, string category) : IRequest<AuthorModel>;
 }

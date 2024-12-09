@@ -23,7 +23,7 @@ namespace Application.Book.Handlers
         {
             if (request.id == Guid.Empty)
             {
-                throw new ArgumentException("ID must be a valid GUID.");
+                throw new ArgumentException("ID can not be empty.");
             }
 
             var bookId = _fakeDatabase.GetBookById(request.id);

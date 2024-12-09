@@ -20,10 +20,10 @@ namespace Infrastructure.Database
             bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Action", Description = "Action" });
             bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title =  "The Book of Fantasy", Description = "Fantasy" });
 
-            authorModelList.Add(new AuthorModel { Id = 1, FirstName =  "John", LastName = "Dough",  Category = "Comedy" } );
-            authorModelList.Add(new AuthorModel { Id = 2, FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
-            authorModelList.Add(new AuthorModel { Id = 3, FirstName = "Dick", LastName = "Doncaster", Category = "Action" });
-            authorModelList.Add(new AuthorModel { Id = 4, FirstName = "Peter", LastName = "Pele", Category = "Fantasy" });
+            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName =  "John", LastName = "Dough",  Category = "Comedy" } );
+            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
+            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Dick", LastName = "Doncaster", Category = "Action" });
+            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Peter", LastName = "Pele", Category = "Fantasy" });
 
             userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Ville" });
             userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Hans" });
@@ -103,7 +103,7 @@ namespace Infrastructure.Database
             return authorModelList;
         }
 
-        public AuthorModel GetAuthorById(int id)
+        public AuthorModel GetAuthorById(Guid id)
         {
             return authorModelList.FirstOrDefault(author => author.Id == id);
         }
@@ -113,7 +113,7 @@ namespace Infrastructure.Database
             authorModelList.Add(newAuthor);
         }
 
-        public void DeleteAuthor(int id)
+        public void DeleteAuthor(Guid id)
         {
             try
             {
