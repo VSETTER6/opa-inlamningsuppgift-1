@@ -15,10 +15,10 @@ namespace Infrastructure.Database
 
         public FakeDatabase()
         {
-            bookModelList.Add(new BookModel { Id = 1, Title = "The Book of Fun", Description = "Funny" });
-            bookModelList.Add(new BookModel { Id = 2, Title = "The Book of Mystery", Description = "Mystery" });
-            bookModelList.Add(new BookModel { Id = 3, Title = "The Book of Action", Description = "Action" });
-            bookModelList.Add(new BookModel { Id = 4, Title =  "The Book of Fantasy", Description = "Fantasy" });
+            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Fun", Description = "Funny" });
+            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Mystery", Description = "Mystery" });
+            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Action", Description = "Action" });
+            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title =  "The Book of Fantasy", Description = "Fantasy" });
 
             authorModelList.Add(new AuthorModel { Id = 1, FirstName =  "John", LastName = "Dough",  Category = "Comedy" } );
             authorModelList.Add(new AuthorModel { Id = 2, FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
@@ -35,7 +35,7 @@ namespace Infrastructure.Database
             return bookModelList;
         }
 
-        public BookModel GetBookById(int id)
+        public BookModel GetBookById(Guid id)
         {
             return bookModelList.FirstOrDefault(book => book.Id == id);
         }
@@ -45,7 +45,7 @@ namespace Infrastructure.Database
             bookModelList.Add(newBook);
         }
 
-        public void DeleteBook(int id)
+        public void DeleteBook(Guid id)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Infrastructure.Database
         {
             try
             {
-                var authorToUpdate = bookModelList.FirstOrDefault(author => author.Id == updatedAuthor.Id);
+                var authorToUpdate = authorModelList.FirstOrDefault(author => author.Id == updatedAuthor.Id);
 
                 if (authorToUpdate == null)
                 {
@@ -149,9 +149,9 @@ namespace Infrastructure.Database
                     throw new ArgumentException("None of first name, last name or category can be empty.");
                 }
 
-                authorToUpdate.Title = updatedAuthor.FirstName;
-                authorToUpdate.Description = updatedAuthor.LastName;
-                authorToUpdate.Description = updatedAuthor.Category;
+                authorToUpdate.FirstName = updatedAuthor.FirstName;
+                authorToUpdate.LastName = updatedAuthor.LastName;
+                authorToUpdate.Category = updatedAuthor.Category;
                 Console.WriteLine($"Author with ID {updatedAuthor.Id} was updated successfully.");
             } 
             catch (Exception ex)

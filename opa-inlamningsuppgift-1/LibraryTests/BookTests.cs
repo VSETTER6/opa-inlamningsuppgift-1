@@ -23,8 +23,8 @@ public class BookTests
 
         var mockBooksList = new List<BookModel>
         {
-            new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1"},
-            new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2"}
+            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
+            new BookModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetAllBooks()).Returns(mockBooksList);
@@ -42,21 +42,22 @@ public class BookTests
     }
 
     [Test]
-    [TestCase(1)]
-    [TestCase(2)]
-    public async Task GetBookByIdHandler_ShouldReturnBook_IfValidIdIsGiven(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
+    public async Task GetBookByIdHandler_ShouldReturnBook_IfValidIdIsGiven(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
+        var bookId = Guid.NewGuid();
         var mockBooksList = new List<BookModel>
         {
-            new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1"},
-            new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2"}
+            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
+            new BookModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
         };
 
-        mockDatabase.Setup(datebase => datebase.GetBookById(It.IsAny<int>()))
-                    .Returns((int id) => mockBooksList.FirstOrDefault(book => book.Id == id));
+        mockDatabase.Setup(datebase => datebase.GetBookById(It.IsAny<Guid>()))
+                    .Returns((Guid id) => mockBooksList.FirstOrDefault(book => book.Id == id));
 
         var handler = new GetBookByIdHandler(mockDatabase.Object);
 
@@ -70,9 +71,9 @@ public class BookTests
     }
 
     [Test]
-    [TestCase(-1)]
-    [TestCase(0)]
-    public void GetBookByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
+    public void GetBookByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
@@ -81,10 +82,10 @@ public class BookTests
         var query = new GetBookByIdQuery(id);
 
         // Act & Assert
-        var expectedException = Assert.ThrowsAsync<ArgumentException>(async () =>
-                        await handler.Handle(query, CancellationToken.None));
+        var expectedException = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+                                await handler.Handle(query, CancellationToken.None));
 
-        Assert.That(expectedException.Message, Is.EqualTo("ID must be a positive number."));
+        Assert.That(expectedException.Message, Is.EqualTo($"No book found with ID {id}."));
     }
 
     [Test]
@@ -99,8 +100,8 @@ public class BookTests
 
         var mockBooksList = new List<BookModel>
     {
-        new BookModel { Id = 1, Title = "Book 1", Description = "Description 1" },
-        new BookModel { Id = 2, Title = "Book 2", Description = "Description 2" }
+        new BookModel { Id = Guid.NewGuid(), Title = "Book 1", Description = "Description 1" },
+        new BookModel { Id = Guid.NewGuid(), Title = "Book 2", Description = "Description 2" }
     };
 
         mockDatabase.Setup(database => database.GetAllBooks()).Returns(mockBooksList);
@@ -119,7 +120,7 @@ public class BookTests
             Assert.NotNull(result);
             Assert.AreEqual(title, result.Title);
             Assert.AreEqual(description, result.Description);
-            Assert.AreEqual(mockBooksList.Count, result.Id);
+            Assert.IsTrue(mockBooksList.Any(book => book.Id == result.Id));
         }
         else
         {
@@ -132,35 +133,35 @@ public class BookTests
     }
 
     [Test]
-    [TestCase(1)]
-    [TestCase(99)]
-    public async Task DeleteBookHandler_ShouldRemoveBook_IfValidIdIsGiven(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("a3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    public async Task DeleteBookHandler_ShouldRemoveBook_IfValidIdIsGiven(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
         var mockBooksList = new List<BookModel>
         {
-            new BookModel { Id = 1, Title = "BookTitle1", Description = "Description1" },
-            new BookModel { Id = 2, Title = "BookTitle2", Description = "Description2" }
+            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1" },
+            new BookModel { Id = Guid.NewGuid(), Title = "BookTitle2", Description = "Description2" }
         };
 
         mockDatabase.Setup(database => database.GetAllBooks()).Returns(mockBooksList);
-        mockDatabase.Setup(database => database.DeleteBook(It.IsAny<int>()))
-                    .Callback<int>(bookId => mockBooksList.RemoveAll(book => book.Id == bookId));
+        mockDatabase.Setup(database => database.DeleteBook(It.IsAny<Guid>()))
+                    .Callback<Guid>(bookId => mockBooksList.RemoveAll(book => book.Id == bookId));
 
         var handler = new DeleteBookHandler(mockDatabase.Object);
 
         var command = new DeleteBookCommand(id);
 
         // Act & Assert
-        if (id == 1)
+        if (Guid.TryParse("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", out Guid parsedGuid) && id == parsedGuid)
         {
             var result = await handler.Handle(command, CancellationToken.None);
 
             Assert.IsTrue(result);
             Assert.AreEqual(1, mockBooksList.Count);
-            Assert.IsNull(mockBooksList.FirstOrDefault(book => book.Id == 1));
+            Assert.IsNull(mockBooksList.FirstOrDefault(book => book.Id == parsedGuid));
         }
         else
         {
@@ -172,19 +173,19 @@ public class BookTests
     }
 
     [Test]
-    [TestCase(1, "Updated Title", "Updated Description")]
-    public async Task UpdateBookHandler_ShouldUpdateBook_WhenValidRequestIsGiven(int id, string newTitle, string newDescription)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", "Updated Title", "Updated Description")]
+    public async Task UpdateBookHandler_ShouldUpdateBook_WhenValidRequestIsGiven(Guid id, string newTitle, string newDescription)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
         var mockBooksList = new List<BookModel>
         {
-            new BookModel { Id = 1, Title = "Original Title", Description = "Original Description" },
-            new BookModel { Id = 2, Title = "Another Title", Description = "Another Description" }
+            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "Original Title", Description = "Original Description" },
+            new BookModel { Id = Guid.NewGuid(), Title = "Another Title", Description = "Another Description" }
         };
 
-        mockDatabase.Setup(database => database.GetBookById(It.IsAny<int>()))
-                    .Returns((int bookId) => mockBooksList.FirstOrDefault(book => book.Id == bookId));
+        mockDatabase.Setup(database => database.GetBookById(It.IsAny<Guid>()))
+                    .Returns((Guid bookId) => mockBooksList.FirstOrDefault(book => book.Id == bookId));
 
         mockDatabase.Setup(datebase => datebase.UpdateBook(It.IsAny<BookModel>()))
                     .Callback<BookModel>(updatedBook =>

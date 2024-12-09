@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Book.Commands
 {
-    public record UpdateBookCommand(int id, string title, string description) : IRequest<BookModel>;
+    public record UpdateBookCommand(Guid id, string title, string description) : IRequest<BookModel>;
 }

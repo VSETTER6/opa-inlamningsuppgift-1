@@ -28,7 +28,7 @@ namespace Application.Book.Handlers
 
             var newBook = new BookModel
             {
-                Id = _fakeDatabase.GetAllBooks().Count + 1,
+                Id = Guid.NewGuid(),
                 Title = request.title,
                 Description = request.description
             };

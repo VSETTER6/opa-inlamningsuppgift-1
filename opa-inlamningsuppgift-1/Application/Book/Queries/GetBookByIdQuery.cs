@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace Application.Book.Queries
 {
-    public record GetBookByIdQuery(int id) : IRequest<BookModel>;
+    public record GetBookByIdQuery(Guid id) : IRequest<BookModel>;
 }
