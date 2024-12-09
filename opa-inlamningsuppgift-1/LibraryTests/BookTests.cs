@@ -36,9 +36,9 @@ public class BookTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.AreEqual(2, result.Count);
+        Assert.That(result.Count, Is.EqualTo(2));
         Assert.AreEqual("BookTitle1", result[0].Title);
-        Assert.AreEqual("Description2", result[1].Description);
+        Assert.That(result[1].Description, Is.EqualTo("Description2"));
     }
 
     [Test]
@@ -67,7 +67,7 @@ public class BookTests
         // Assert
         var expectedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
         Assert.NotNull(result);
-        Assert.AreEqual(expectedBook, result);
+        Assert.That(result, Is.EqualTo(expectedBook));
     }
 
     [Test]
@@ -118,8 +118,8 @@ public class BookTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.AreEqual(title, result.Title);
-            Assert.AreEqual(description, result.Description);
+            Assert.That(result.Title, Is.EqualTo(title));
+            Assert.That(result.Description, Is.EqualTo(description));
             Assert.IsTrue(mockBooksList.Any(book => book.Id == result.Id));
         }
         else

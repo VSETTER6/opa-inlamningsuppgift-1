@@ -35,10 +35,10 @@ public class AuthorTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.AreEqual(2, result.Count);
-        Assert.AreEqual("FirstName1", result[0].FirstName);
-        Assert.AreEqual("LastName2", result[1].LastName);
-        Assert.AreEqual("Category2", result[1].Category);
+        Assert.That(result.Count, Is.EqualTo(2));
+        Assert.That(result[0].FirstName, Is.EqualTo("FirstName1"));
+        Assert.That(result[1].LastName, Is.EqualTo("LastName2"));
+        Assert.That(result[1].Category, Is.EqualTo("Category2"));
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class AuthorTests
         // Assert
         var expectedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
         Assert.NotNull(result);
-        Assert.AreEqual(expectedAuthor, result);
+        Assert.That(result, Is.EqualTo(expectedAuthor));
     }
 
     [Test]
@@ -117,10 +117,10 @@ public class AuthorTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.AreEqual(firstName, result.FirstName);
-            Assert.AreEqual(lastName, result.LastName);
-            Assert.AreEqual(category, result.Category);
-            Assert.AreEqual(mockAuthorsList.Count, result.Id);
+            Assert.That(result.FirstName, Is.EqualTo(firstName));
+            Assert.That(result.LastName, Is.EqualTo(lastName));
+            Assert.That(result.Category, Is.EqualTo(category));
+            Assert.That(result.Id, Is.EqualTo(mockAuthorsList.Count));
         }
         else
         {
@@ -160,7 +160,7 @@ public class AuthorTests
             var result = await handler.Handle(command, CancellationToken.None);
 
             Assert.IsTrue(result);
-            Assert.AreEqual(1, mockAuthorsList.Count);
+            Assert.That(mockAuthorsList.Count, Is.EqualTo(1));
             Assert.IsNull(mockAuthorsList.FirstOrDefault(author => author.Id == 1));
         }
         else
@@ -208,8 +208,8 @@ public class AuthorTests
         // Assert
         var updatedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
         Assert.NotNull(result);
-        Assert.AreEqual(newFirstName, updatedAuthor.FirstName);
-        Assert.AreEqual(newLastName, updatedAuthor.LastName);
-        Assert.AreEqual(newCategory, updatedAuthor.Category);
+        Assert.That(updatedAuthor.FirstName, Is.EqualTo(newFirstName));
+        Assert.That(updatedAuthor.LastName, Is.EqualTo(newLastName));
+        Assert.That(updatedAuthor.Category, Is.EqualTo(newCategory));
     }
 }
