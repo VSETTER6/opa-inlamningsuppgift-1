@@ -22,8 +22,8 @@ public class AuthorTests
 
         var mockAuthorsList = new List<AuthorModel>
         {
-            new AuthorModel { Id = 1, FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = 2, FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new AuthorModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetAllAuthors()).Returns(mockAuthorsList);
@@ -42,21 +42,21 @@ public class AuthorTests
     }
 
     [Test]
-    [TestCase(1)]
-    [TestCase(2)]
-    public async Task GetAuthorByIdHandler_ShouldReturnAuthor_IfValidIdIsGiven(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
+    public async Task GetAuthorByIdHandler_ShouldReturnAuthor_IfValidIdIsGiven(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
         var mockAuthorsList = new List<AuthorModel>
         {
-            new AuthorModel { Id = 1, FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = 2, FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new AuthorModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
-        mockDatabase.Setup(datebase => datebase.GetAuthorById(It.IsAny<int>()))
-                    .Returns((int id) => mockAuthorsList.FirstOrDefault(author => author.Id == id));
+        mockDatabase.Setup(datebase => datebase.GetAuthorById(It.IsAny<Guid>()))
+                    .Returns((Guid id) => mockAuthorsList.FirstOrDefault(author => author.Id == id));
 
         var handler = new GetAuthorByIdHandler(mockDatabase.Object);
 
@@ -70,9 +70,9 @@ public class AuthorTests
     }
 
     [Test]
-    [TestCase(-1)]
-    [TestCase(0)]
-    public void GetAuthorByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
+    public void GetAuthorByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
@@ -81,10 +81,10 @@ public class AuthorTests
         var query = new GetAuthorByIdQuery(id);
 
         // Act & Assert
-        var expectedException = Assert.ThrowsAsync<ArgumentException>(async () =>
+        var expectedException = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
                         await handler.Handle(query, CancellationToken.None));
 
-        Assert.That(expectedException.Message, Is.EqualTo("ID must be a positive number."));
+        Assert.That(expectedException.Message, Is.EqualTo($"No author found with ID {id}."));
     }
 
     [Test]
@@ -99,8 +99,8 @@ public class AuthorTests
 
         var mockAuthorsList = new List<AuthorModel>
         {
-            new AuthorModel { Id = 1, FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = 2, FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
         mockDatabase.Setup(database => database.GetAllAuthors()).Returns(mockAuthorsList);
@@ -120,7 +120,7 @@ public class AuthorTests
             Assert.That(result.FirstName, Is.EqualTo(firstName));
             Assert.That(result.LastName, Is.EqualTo(lastName));
             Assert.That(result.Category, Is.EqualTo(category));
-            Assert.That(result.Id, Is.EqualTo(mockAuthorsList.Count));
+            Assert.IsTrue(mockAuthorsList.Any(author => author.Id == result.Id));
         }
         else
         {
@@ -133,35 +133,35 @@ public class AuthorTests
     }
 
     [Test]
-    [TestCase(1)]
-    [TestCase(99)]
-    public async Task DeleteAuthorHandler_ShouldRemoveAuthor_IfValidIdIsGiven(int id)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    [TestCase("a3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
+    public async Task DeleteAuthorHandler_ShouldRemoveAuthor_IfValidIdIsGiven(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
 
         var mockAuthorsList = new List<AuthorModel>
     {
-        new AuthorModel { Id = 1, FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-        new AuthorModel { Id = 2, FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+        new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+        new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
     };
 
         mockDatabase.Setup(database => database.GetAllAuthors()).Returns(mockAuthorsList);
-        mockDatabase.Setup(database => database.DeleteAuthor(It.IsAny<int>()))
-                    .Callback<int>(authorId => mockAuthorsList.RemoveAll(author => author.Id == authorId));
+        mockDatabase.Setup(database => database.DeleteAuthor(It.IsAny<Guid>()))
+                    .Callback<Guid>(authorId => mockAuthorsList.RemoveAll(author => author.Id == authorId));
 
         var handler = new DeleteAuthorHandler(mockDatabase.Object);
 
         var command = new DeleteAuthorCommand(id);
 
         // Act & Assert
-        if (id == 1)
+        if (Guid.TryParse("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", out Guid parsedGuid) && id == parsedGuid)
         {
             var result = await handler.Handle(command, CancellationToken.None);
 
             Assert.IsTrue(result);
             Assert.That(mockAuthorsList.Count, Is.EqualTo(1));
-            Assert.IsNull(mockAuthorsList.FirstOrDefault(author => author.Id == 1));
+            Assert.IsNull(mockAuthorsList.FirstOrDefault(author => author.Id == parsedGuid));
         }
         else
         {
@@ -173,19 +173,19 @@ public class AuthorTests
     }
 
     [Test]
-    [TestCase(1, "Updated FirstName", "Updated LastName", "Updated Category")]
-    public async Task UpdateAuthorHandler_ShouldUpdateAuthor_WhenValidRequestIsGiven(int id, string newFirstName, string newLastName, string newCategory)
+    [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", "Updated FirstName", "Updated LastName", "Updated Category")]
+    public async Task UpdateAuthorHandler_ShouldUpdateAuthor_WhenValidRequestIsGiven(Guid id, string newFirstName, string newLastName, string newCategory)
     {
         // Arrange
         var mockDatabase = new Mock<IFakeDatabase>();
         var mockAuthorsList = new List<AuthorModel>
         {
-            new AuthorModel { Id = 1, FirstName = "Original FirstName", LastName = "Original LastName", Category = "Orginal Category" },
-            new AuthorModel { Id = 2, FirstName = "Another FirstName", LastName = "Another LastName", Category = "Another Category" }
+            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "Original FirstName", LastName = "Original LastName", Category = "Orginal Category" },
+            new AuthorModel { Id = Guid.NewGuid(), FirstName = "Another FirstName", LastName = "Another LastName", Category = "Another Category" }
         };
 
-        mockDatabase.Setup(database => database.GetAuthorById(It.IsAny<int>()))
-                    .Returns((int authorId) => mockAuthorsList.FirstOrDefault(author => author.Id == authorId));
+        mockDatabase.Setup(database => database.GetAuthorById(It.IsAny<Guid>()))
+                    .Returns((Guid authorId) => mockAuthorsList.FirstOrDefault(author => author.Id == authorId));
 
         mockDatabase.Setup(datebase => datebase.UpdateAuthor(It.IsAny<AuthorModel>()))
                     .Callback<AuthorModel>(updatedAuthor =>

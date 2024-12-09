@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Author.Commands
 {
-    public record DeleteAuthorCommand(int id) : IRequest<bool>;
+    public record DeleteAuthorCommand(Guid id) : IRequest<bool>;
 }

@@ -28,7 +28,7 @@ namespace Application.Author.Handlers
 
             var newAuthor = new AuthorModel
             {
-                Id = _fakeDatabase.GetAllAuthors().Count + 1,
+                Id = Guid.NewGuid(),
                 FirstName = request.firstName,
                 LastName = request.lastName,
                 Category = request.category
