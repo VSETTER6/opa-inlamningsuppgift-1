@@ -1,42 +1,43 @@
 ﻿using Application.Author.Commands;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Author.Handlers
 {
     public class AddAuthorHandler : IRequestHandler<AddAuthorCommand, AuthorModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IAuthorRepository _authorRepository;
 
-        public AddAuthorHandler(IFakeDatabase fakeDatabase)
+        public AddAuthorHandler(IAuthorRepository authorRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
         public async Task<AuthorModel> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))
             {
-                throw new ArgumentException("First name, last name and category cannot be empty.");
+                throw new ArgumentException("None of first name, last name or category can be empty.");
             }
 
-            var newAuthor = new AuthorModel
+            try
             {
-                Id = Guid.NewGuid(),
-                FirstName = request.firstName,
-                LastName = request.lastName,
-                Category = request.category
-            };
+                AuthorModel newAuthor = new AuthorModel
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = request.firstName,
+                    LastName = request.lastName,
+                    Category = request.category
+                };
 
-            _fakeDatabase.AddAuthor(newAuthor);
-
-            return newAuthor;
+                await _authorRepository.AddAuthor(newAuthor);
+                return newAuthor;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"An error occurred while adding the author. {ex}");
+            }
         }
     }
 }

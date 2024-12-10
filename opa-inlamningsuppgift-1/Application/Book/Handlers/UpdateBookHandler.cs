@@ -1,27 +1,22 @@
 ﻿using Application.Book.Commands;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Book.Handlers
 {
     public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, BookModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IBookRepository _bookRepository;
 
-        public UpdateBookHandler(IFakeDatabase fakeDatabase)
+        public UpdateBookHandler(IBookRepository bookRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _bookRepository = bookRepository;
         }
 
-        public Task<BookModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
+        public async Task<BookModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            var bookToUpdate = _fakeDatabase.GetBookById(request.id);
+            BookModel bookToUpdate = await _bookRepository.GetBookById(request.id);
 
             if (bookToUpdate == null)
             {
@@ -31,9 +26,9 @@ namespace Application.Book.Handlers
             bookToUpdate.Title = request.title;
             bookToUpdate.Description = request.description;
 
-            _fakeDatabase.UpdateBook(bookToUpdate);
+            await _bookRepository.UpdateBook(bookToUpdate.Id ,bookToUpdate);
 
-            return Task.FromResult(bookToUpdate);
+            return bookToUpdate;
         }
     }
 }

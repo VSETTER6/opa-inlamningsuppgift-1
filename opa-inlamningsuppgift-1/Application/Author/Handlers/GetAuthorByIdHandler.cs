@@ -1,37 +1,35 @@
 ﻿using Application.Author.Queries;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Author.Handlers
 {
     public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, AuthorModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IAuthorRepository _authorRepository;
 
-        public GetAuthorByIdHandler(IFakeDatabase fakeDatabase)
+        public GetAuthorByIdHandler(IAuthorRepository authorRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
-        public Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
+
+        public async Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
             if (request.id == Guid.Empty)
             {
-                throw new ArgumentException("ID can not be empty.");
+                throw new Exception("ID cannot be empty and must be GUID.");
             }
 
-            var authorId = _fakeDatabase.GetAuthorById(request.id);
-            if (authorId == null)
+            try
             {
-                throw new KeyNotFoundException($"No author found with ID {request.id}.");
+                var author = await _authorRepository.GetAuthorById(request.id);
+                return author;
             }
-
-            return Task.FromResult(authorId);
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while getting the author ID. {ex}");
+            }
         }
     }
 }

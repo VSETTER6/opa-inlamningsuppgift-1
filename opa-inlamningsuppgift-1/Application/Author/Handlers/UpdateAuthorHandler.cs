@@ -1,40 +1,47 @@
 ﻿using Application.Author.Commands;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Author.Handlers
 {
     public class UpdateAuthorHandler : IRequestHandler<UpdateAuthorCommand, AuthorModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IAuthorRepository _authorRepository;
 
-        public UpdateAuthorHandler(IFakeDatabase fakeDatabase)
+        public UpdateAuthorHandler(IAuthorRepository authorRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
-        public Task<AuthorModel> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<AuthorModel> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-            var authorToUpdate = _fakeDatabase.GetAuthorById(request.id);
+            AuthorModel authorToUpdate = await _authorRepository.GetAuthorById(request.id);
 
             if (authorToUpdate == null)
             {
                 throw new KeyNotFoundException($"Author with ID {request.id} not found.");
             }
 
-            authorToUpdate.FirstName = request.firstName;
-            authorToUpdate.LastName = request.lastName;
-            authorToUpdate.Category = request.category;
+            if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))
+            {
+                throw new ArgumentException("First name, last name, and category cannot be empty.");
+            }
 
-            _fakeDatabase.UpdateAuthor(authorToUpdate);
+            try
+            {
+                authorToUpdate.FirstName = request.firstName;
+                authorToUpdate.LastName = request.lastName;
+                authorToUpdate.Category = request.category;
 
-            return Task.FromResult(authorToUpdate);
+                await _authorRepository.UpdateAuthor(authorToUpdate.Id, authorToUpdate);
+
+                return authorToUpdate;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while updating the author. {ex}");
+            }
         }
     }
 }
