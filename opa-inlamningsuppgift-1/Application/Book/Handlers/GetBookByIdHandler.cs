@@ -1,22 +1,17 @@
 ﻿using Application.Book.Queries;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Book.Handlers
 {
     public class GetBookByIdHandler : IRequestHandler<GetBookByIdQuery, BookModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IBookRepository _bookRepository;
 
-        public GetBookByIdHandler(IFakeDatabase fakeDatabase)
+        public GetBookByIdHandler(IBookRepository bookRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _bookRepository = bookRepository;
         }
 
         public Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
@@ -26,13 +21,13 @@ namespace Application.Book.Handlers
                 throw new ArgumentException("ID can not be empty.");
             }
 
-            var bookId = _fakeDatabase.GetBookById(request.id);
+            var bookId = _bookRepository.GetBookById(request.id);
             if (bookId == null)
             {
                 throw new KeyNotFoundException($"No book found with ID {request.id}.");
             }
 
-            return Task.FromResult(bookId);
+            return bookId;
         }
     }
 }

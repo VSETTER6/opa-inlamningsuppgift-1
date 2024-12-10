@@ -1,27 +1,30 @@
 ﻿using Application.Author.Queries;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Author.Handlers
 {
     public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, List<AuthorModel>>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IAuthorRepository _authorRepository;
 
-        public GetAllAuthorsHandler(IFakeDatabase fakeDatabase)
+        public GetAllAuthorsHandler(IAuthorRepository authorRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
-        public Task<List<AuthorModel>> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
+        public async Task<List<AuthorModel>> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(_fakeDatabase.GetAllAuthors());
+            try
+            {
+                var authors = await _authorRepository.GetAllAuthors();
+                return authors;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while getting the authors. {ex}");
+            }
         }
     }
 }

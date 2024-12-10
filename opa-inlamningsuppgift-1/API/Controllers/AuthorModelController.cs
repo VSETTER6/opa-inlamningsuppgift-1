@@ -1,5 +1,6 @@
 ﻿using Application.Author.Commands;
 using Application.Author.Queries;
+using Azure.Core;
 using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,60 +21,87 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/<AuthorModelController>
-        [Authorize]
-        [HttpGet]
-        public async Task<List<AuthorModel>> GetAllAuthors()
+        [HttpGet("GetAllAuthors")]
+        public async Task<IActionResult> GetAllAuthors()
         {
-            return await _mediator.Send(new GetAllAuthorsQuery());
+            try
+            {
+                var authors = await _mediator.Send(new GetAllAuthorsQuery());
+                return Ok(authors);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while getting authors. {ex}");
+            }
         }
 
-        // GET api/<AuthorModelController>/5
-        [HttpGet("{id}")]
-        public async Task<AuthorModel> GetAuthorById(Guid id)
+        [HttpGet("GetAuthorById")]
+        public async Task<IActionResult> GetAuthorById(Guid id)
         {
-            return await _mediator.Send(new GetAuthorByIdQuery(id));
+            try
+            {
+                var authors = await _mediator.Send(new GetAuthorByIdQuery(id));
+                return Ok(authors);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while getting authors. {ex}");
+            }
         }
 
-        // POST api/<AuthorModelController>
-        [HttpPost]
+        [HttpPost("AddAuthor")]
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorCommand command)
         {
-            var result = await _mediator.Send(command);
-
-            if (result == null)
+            try
             {
-                return BadRequest("Failed to add author.");
-            }
+                var result = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetAuthorById), new { id = result.Id }, result);
+                return CreatedAtAction(nameof(GetAuthorById), new {id = result.Id}, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while adding the author. {ex}");
+            }
         }
 
-        // PUT api/<AuthorModelController>/5
-        [HttpPut("{id}")]
+        [HttpPut("UpdateAuthor")]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] UpdateAuthorCommand command)
         {
-            if (id != command.id)
+            if (id == Guid.Empty)
             {
-                return BadRequest("ID does not match.");
+                return BadRequest("ID cannot be empty and must be GUID.");
             }
 
             try
             {
-                var result = await _mediator.Send(command);
-                return Ok(result);
+                await _mediator.Send(command);
+
+                return Ok($"Author with ID {id} has been successfully updated.");
             }
-            catch (ArgumentException ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"An error occurred while updating the author. {ex.Message}");
             }
         }
 
-        // DELETE api/<AuthorModelController>/5
-        [HttpDelete("{id}")]
-        public async Task<bool> DeleteAuthor(Guid id)
+        [HttpDelete("DeleteAuthor")]
+        public async Task<IActionResult> DeleteAuthor(Guid id)
         {
-            return await _mediator.Send(new DeleteAuthorCommand(id));
+            if (id == Guid.Empty)
+            {
+                BadRequest("ID cannot be empty and must be GUID.");
+            }
+
+            try
+            {
+                await _mediator.Send(new DeleteAuthorCommand(id));
+
+                return Ok($"Author has been successfully deleted.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while deleting the author. {ex}");
+            }
         }
     }
 }

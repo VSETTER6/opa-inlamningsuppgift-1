@@ -1,37 +1,37 @@
 ﻿using Application.Author.Commands;
-using Infrastructure.Database;
+using Application.Interfaces.RepositoryInterfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Author.Handlers
 {
-    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, bool>
+    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Unit>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IAuthorRepository _authorRepository;
 
-        public DeleteAuthorHandler(IFakeDatabase fakeDatabase)
+        public DeleteAuthorHandler(IAuthorRepository authorRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
-        public async Task<bool> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
-            var authors = _fakeDatabase.GetAllAuthors();
+            var author = await _authorRepository.GetAuthorById(request.id);
 
-            var authorToRemove = authors.FirstOrDefault(author => author.Id == request.id);
-
-            if (authorToRemove == null)
+            if (author == null)
             {
-                throw new KeyNotFoundException($"Author with ID {request.id} not found.");
+                throw new KeyNotFoundException($"Author with ID {request.id} was not found.");
             }
 
-            _fakeDatabase.DeleteAuthor(request.id);
+            try
+            {
+                await _authorRepository.DeleteAuthor(request.id);
 
-            return await Task.FromResult(true);
+                return Unit.Value;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while deleting the author. {ex}");
+            }
         }
     }
 }

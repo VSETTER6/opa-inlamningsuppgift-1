@@ -1,22 +1,17 @@
 ﻿using Application.Book.Commands;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
-using Infrastructure.Database;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Book.Handlers
 {
     public class AddBookHandler : IRequestHandler<AddBookCommand, BookModel>
     {
-        private readonly IFakeDatabase _fakeDatabase;
+        private readonly IBookRepository _bookRepository;
 
-        public AddBookHandler(IFakeDatabase fakeDatabase)
+        public AddBookHandler(IBookRepository bookRepository)
         {
-            _fakeDatabase = fakeDatabase;
+            _bookRepository = bookRepository;
         }
 
         public async Task<BookModel> Handle(AddBookCommand request, CancellationToken cancellationToken)
@@ -26,14 +21,14 @@ namespace Application.Book.Handlers
                 throw new ArgumentException("Title and description cannot be empty.");
             }
 
-            var newBook = new BookModel
+            BookModel newBook = new BookModel
             {
                 Id = Guid.NewGuid(),
                 Title = request.title,
                 Description = request.description
             };
 
-            _fakeDatabase.AddBook(newBook);
+            await _bookRepository.AddBook(newBook);
 
             return newBook;
         }
