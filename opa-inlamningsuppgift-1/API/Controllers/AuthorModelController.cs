@@ -67,11 +67,6 @@ namespace API.Controllers
         [HttpPut("UpdateAuthor")]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] UpdateAuthorCommand command)
         {
-            if (id == Guid.Empty)
-            {
-                return BadRequest("ID cannot be empty and must be GUID.");
-            }
-
             try
             {
                 await _mediator.Send(command);
@@ -80,18 +75,13 @@ namespace API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest($"An error occurred while updating the author. {ex.Message}");
+                return BadRequest($"An error occurred while updating the author. {ex}");
             }
         }
 
         [HttpDelete("DeleteAuthor")]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
-            if (id == Guid.Empty)
-            {
-                BadRequest("ID cannot be empty and must be GUID.");
-            }
-
             try
             {
                 await _mediator.Send(new DeleteAuthorCommand(id));
