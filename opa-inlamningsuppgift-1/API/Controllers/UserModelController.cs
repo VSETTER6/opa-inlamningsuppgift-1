@@ -26,8 +26,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] UserDto newUser)
+        [Route("AddUser")]
+        public async Task<IActionResult> AddUser([FromBody] UserDto newUser)
         {
             return Ok(await _mediator.Send(new AddUserCommand(newUser)));
         }
