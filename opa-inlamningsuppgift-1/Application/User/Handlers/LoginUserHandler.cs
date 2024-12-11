@@ -18,14 +18,14 @@ namespace Application.User.Handlers
 
         public async Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
         {
-            var user = _userRepository.Users.FirstOrDefault(user => user.UserName == request.LoginUser.Username && user.Password == request.LoginUser.Password);
+            var user = _userRepository.GetUserByCredentials(request.LoginUser.Username, request.LoginUser.Password);
 
             if (user == null)
             {
                 throw new ArgumentException("Invalid username or password");
             }
 
-            string token = _tokenHelper.GenerateJwtToken(user);
+            string token = _tokenHelper.GenerateJwtToken(user.Result);
 
             return await Task.FromResult(token);
         }

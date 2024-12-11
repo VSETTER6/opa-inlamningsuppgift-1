@@ -2,6 +2,7 @@
 using Application.User.DTOS;
 using Application.User.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,6 +18,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+
         [HttpPost("AddUser")]
         public async Task<IActionResult> AddUser([FromBody] UserDto newUser)
         {
@@ -31,6 +33,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
@@ -46,6 +49,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -60,6 +64,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetUserById")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
@@ -80,6 +85,7 @@ namespace API.Controllers
             return Ok(await _mediator.Send(new LoginUserQuery(userWantingToLogIn)));
         }
 
+        [Authorize]
         [HttpPut("UpdateUser")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
         {

@@ -1,6 +1,7 @@
 ﻿using Application.Book.Commands;
 using Application.Book.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +17,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        [Authorize]
         [HttpPost("AddBook")]
         public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
         {
@@ -31,6 +33,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("DeleteBook")]
         public async Task<IActionResult> DeleteBook(Guid id)
         {
@@ -46,6 +49,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetAllBooks")]
         public async Task<IActionResult> GetAllBooks()
         {
@@ -60,6 +64,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetBookById")]
         public async Task<IActionResult> GetBookById(Guid id)
         {
@@ -74,6 +79,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("UpdateBook")]
         public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand command)
         {

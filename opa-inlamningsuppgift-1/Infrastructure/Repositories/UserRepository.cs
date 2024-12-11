@@ -14,14 +14,6 @@ namespace Infrastructure.Repositories
             _realDatabase = realDatabase;
         }
 
-        private static List<UserModel> userModelList = new();
-
-        public List<UserModel> Users 
-        {
-            get { return userModelList; }
-            set { userModelList = value; }
-        }
-
         public async Task AddUser(UserModel user)
         {
             await _realDatabase.Users.AddAsync(user);
@@ -44,6 +36,11 @@ namespace Infrastructure.Repositories
         public async Task<List<UserModel>> GetAllUsers()
         {
             return await _realDatabase.Users.ToListAsync();
+        }
+
+        public async Task<UserModel> GetUserByCredentials(string username, string password)
+        {
+            return await _realDatabase.Users.FirstOrDefaultAsync(user => user.UserName == username && user.Password == password);
         }
 
         public async Task<UserModel> GetUserById(Guid id)
