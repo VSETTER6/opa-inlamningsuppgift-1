@@ -1,13 +1,7 @@
-﻿using Application.Author.Commands;
-using Application.Author.Queries;
-using Application.Book.Commands;
-using Application.Book.Handlers;
+﻿using Application.Book.Commands;
 using Application.Book.Queries;
-using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace API.Controllers
 {
@@ -20,6 +14,36 @@ namespace API.Controllers
         public BookModelController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpPost("AddBook")]
+        public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
+        {
+            try
+            {
+                var result = await _mediator.Send(command);
+
+                return CreatedAtAction(nameof(GetBookById), new { id = result.Id }, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while adding the book. {ex}");
+            }
+        }
+
+        [HttpDelete("DeleteBook")]
+        public async Task<IActionResult> DeleteBook(Guid id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteBookCommand(id));
+
+                return Ok($"Book has been successfully deleted.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while deleting the book. {ex}");
+            }
         }
 
         [HttpGet("GetAllBooks")]
@@ -50,21 +74,6 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("AddBook")]
-        public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
-        {
-            try
-            {
-                var result = await _mediator.Send(command);
-
-                return CreatedAtAction(nameof(GetBookById), new { id = result.Id }, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest($"An error occurred while adding the book. {ex}");
-            }
-        }
-
         [HttpPut("UpdateBook")]
         public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand command)
         {
@@ -77,21 +86,6 @@ namespace API.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest($"An error occurred while updating the book. {ex}");
-            }
-        }
-
-        [HttpDelete("DeleteBook")]
-        public async Task<IActionResult> DeleteBook(Guid id)
-        {
-            try
-            {
-                await _mediator.Send(new DeleteBookCommand(id));
-
-                return Ok($"Book has been successfully deleted.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest($"An error occurred while deleting the book. {ex}");
             }
         }
     }

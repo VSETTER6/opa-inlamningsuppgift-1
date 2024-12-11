@@ -1,12 +1,7 @@
 ﻿using Application.Author.Commands;
 using Application.Author.Queries;
-using Azure.Core;
-using Domain.Models;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace API.Controllers
 {
@@ -19,6 +14,35 @@ namespace API.Controllers
         public AuthorModelController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpPost("AddAuthor")]
+        public async Task<IActionResult> AddAuthor([FromBody] AddAuthorCommand command)
+        {
+            try
+            {
+                var result = await _mediator.Send(command);
+                return CreatedAtAction(nameof(GetAuthorById), new {id = result.Id}, result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while adding the author. {ex}");
+            }
+        }
+
+        [HttpDelete("DeleteAuthor")]
+        public async Task<IActionResult> DeleteAuthor(Guid id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteAuthorCommand(id));
+
+                return Ok($"Author has been successfully deleted.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while deleting the author. {ex}");
+            }
         }
 
         [HttpGet("GetAllAuthors")]
@@ -49,21 +73,6 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost("AddAuthor")]
-        public async Task<IActionResult> AddAuthor([FromBody] AddAuthorCommand command)
-        {
-            try
-            {
-                var result = await _mediator.Send(command);
-
-                return CreatedAtAction(nameof(GetAuthorById), new {id = result.Id}, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest($"An error occurred while adding the author. {ex}");
-            }
-        }
-
         [HttpPut("UpdateAuthor")]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] UpdateAuthorCommand command)
         {
@@ -76,21 +85,6 @@ namespace API.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest($"An error occurred while updating the author. {ex}");
-            }
-        }
-
-        [HttpDelete("DeleteAuthor")]
-        public async Task<IActionResult> DeleteAuthor(Guid id)
-        {
-            try
-            {
-                await _mediator.Send(new DeleteAuthorCommand(id));
-
-                return Ok($"Author has been successfully deleted.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest($"An error occurred while deleting the author. {ex}");
             }
         }
     }

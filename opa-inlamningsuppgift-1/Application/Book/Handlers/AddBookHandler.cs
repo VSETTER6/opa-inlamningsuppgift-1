@@ -23,7 +23,7 @@ namespace Application.Book.Handlers
 
             try
             {
-                var newBook = new BookModel
+                BookModel newBook = new BookModel
                 {
                     Id = Guid.NewGuid(),
                     Title = request.title,

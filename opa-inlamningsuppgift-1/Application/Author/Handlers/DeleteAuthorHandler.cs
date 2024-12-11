@@ -1,5 +1,6 @@
 ﻿using Application.Author.Commands;
 using Application.Interfaces.RepositoryInterfaces;
+using Domain.Models;
 using MediatR;
 
 namespace Application.Author.Handlers
@@ -15,7 +16,7 @@ namespace Application.Author.Handlers
 
         public async Task<Unit> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
-            var author = await _authorRepository.GetAuthorById(request.id);
+            AuthorModel author = await _authorRepository.GetAuthorById(request.id);
 
             if (author == null)
             {

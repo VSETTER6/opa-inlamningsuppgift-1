@@ -16,11 +16,11 @@ namespace Application.Author.Handlers
 
         public async Task<AuthorModel> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-            var authorToUpdate = await _authorRepository.GetAuthorById(request.id);
+            AuthorModel authorToUpdate = await _authorRepository.GetAuthorById(request.id);
 
             if (authorToUpdate == null)
             {
-                throw new KeyNotFoundException($"Author with ID {request.id} not found.");
+                throw new KeyNotFoundException($"Author with ID {request.id} was not found.");
             }
 
             if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))

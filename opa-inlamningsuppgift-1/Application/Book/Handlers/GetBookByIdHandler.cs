@@ -16,7 +16,7 @@ namespace Application.Book.Handlers
 
         public async Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
         {
-            var book = await _bookRepository.GetBookById(request.id);
+            BookModel book = await _bookRepository.GetBookById(request.id);
 
             if (book == null)
             {
