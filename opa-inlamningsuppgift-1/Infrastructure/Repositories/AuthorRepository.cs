@@ -22,7 +22,7 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteAuthor(Guid id)
         {
-            AuthorModel author = await _realDatabase.Authors.FindAsync(id);
+            var author = await _realDatabase.Authors.FindAsync(id);
 
             if (author == null)
             {
@@ -40,11 +40,11 @@ namespace Infrastructure.Repositories
 
         public async Task<AuthorModel> GetAuthorById(Guid id)
         {
-            AuthorModel author = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
+            var author = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
 
             if (author == null)
             {
-                throw new KeyNotFoundException($"Author with ID {author.Id} not found.");
+                throw new KeyNotFoundException($"Author with ID {id} not found.");
             }
 
             return author;
@@ -52,7 +52,7 @@ namespace Infrastructure.Repositories
 
         public async Task UpdateAuthor(Guid id, AuthorModel author)
         {
-            AuthorModel existingAuthor = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
+            var existingAuthor = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
 
             if (existingAuthor == null)
             {

@@ -16,7 +16,7 @@ namespace Application.Author.Handlers
 
         public async Task<AuthorModel> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-            AuthorModel authorToUpdate = await _authorRepository.GetAuthorById(request.id);
+            var authorToUpdate = await _authorRepository.GetAuthorById(request.id);
 
             if (authorToUpdate == null)
             {

@@ -23,7 +23,7 @@ namespace Application.Author.Handlers
 
             try
             {
-                AuthorModel newAuthor = new AuthorModel
+                var newAuthor = new AuthorModel
                 {
                     Id = Guid.NewGuid(),
                     FirstName = request.firstName,
