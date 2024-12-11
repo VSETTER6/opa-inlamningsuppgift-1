@@ -2,11 +2,6 @@
 using Domain.Models;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -17,6 +12,14 @@ namespace Infrastructure.Repositories
         public UserRepository(RealDatabase realDatabase)
         {
             _realDatabase = realDatabase;
+        }
+
+        private static List<UserModel> userModelList = new();
+
+        public List<UserModel> Users 
+        {
+            get { return userModelList; }
+            set { userModelList = value; }
         }
 
         public async Task AddUser(UserModel user)

@@ -14,18 +14,29 @@ namespace Application.User.Handlers
             _userRepository = userRepository;
         }
 
-        public Task<UserModel> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserModel> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            UserModel userToAdd = new()
+            if (string.IsNullOrWhiteSpace(request.userDto.Username) || string.IsNullOrWhiteSpace(request.userDto.Password))
             {
-                Id = Guid.NewGuid(),
-                UserName = request.NewUser.UserName,
-                Password = request.NewUser.Password
-            };
+                throw new ArgumentException("None of username or password can be empty.");
+            }
 
-            _userRepository.Users.Add(userToAdd);
+            try
+            {
+                UserModel newUser = new UserModel
+                {
+                    Id = Guid.NewGuid(),
+                    UserName = request.userDto.Username,
+                    Password = request.userDto.Password,
+                };
 
-            return Task.FromResult(userToAdd);
+                await _userRepository.AddUser(newUser);
+                return newUser;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"An error occurred while adding the user. {ex}");
+            }
         }
     }
 }

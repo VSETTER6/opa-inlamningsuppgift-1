@@ -1,32 +1,33 @@
-﻿//using Application.User.Queries;
-//using Application.User.Queries.Helpers;
-//using MediatR;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Application.User.Queries;
+using Application.User.Queries.Helpers;
+using MediatR;
 
-//namespace Application.User.Handlers
-//{
-//    public class LoginUserHandler : IRequestHandler<LoginUserQuery, string>
-//    {
-//        private readonly IFakeDatabase _fakeDatabase;
-//        private readonly TokenHelper _tokenHelper;
+namespace Application.User.Handlers
+{
+    public class LoginUserHandler : IRequestHandler<LoginUserQuery, string>
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly TokenHelper _tokenHelper;
 
-//        public LoginUserHandler(IFakeDatabase fakeDatabase, TokenHelper tokenHelper)
-//        {
-//            _fakeDatabase = fakeDatabase;
-//            _tokenHelper = tokenHelper;
-//        }
+        public LoginUserHandler(IUserRepository userRepository, TokenHelper tokenHelper)
+        {
+            _userRepository = userRepository;
+            _tokenHelper = tokenHelper;
+        }
 
-//        public Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
-//        {
-//            var user = _fakeDatabase.Users.FirstOrDefault(user => user.UserName == request.LoginUser.UserName && user.Password == request.LoginUser.Password);
+        public async Task<string> Handle(LoginUserQuery request, CancellationToken cancellationToken)
+        {
+            var user = _userRepository.Users.FirstOrDefault(user => user.UserName == request.LoginUser.Username && user.Password == request.LoginUser.Password);
 
-//            if (user == null)
-//            {
-//                throw new ArgumentException("Invalid username or password");
-//            }
+            if (user == null)
+            {
+                throw new ArgumentException("Invalid username or password");
+            }
 
-//            string token = _tokenHelper.GenerateJwtToken(user);
+            string token = _tokenHelper.GenerateJwtToken(user);
 
-//            return Task.FromResult(token);
-//        }
-//    }
-//}
+            return await Task.FromResult(token);
+        }
+    }
+}

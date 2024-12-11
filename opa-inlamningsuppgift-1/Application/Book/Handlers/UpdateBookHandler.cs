@@ -16,11 +16,11 @@ namespace Application.Book.Handlers
 
         public async Task<BookModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            var bookToUpdate = await _bookRepository.GetBookById(request.id);
+            BookModel bookToUpdate = await _bookRepository.GetBookById(request.id);
 
             if (bookToUpdate == null)
             {
-                throw new KeyNotFoundException($"Book with ID {request.id} not found.");
+                throw new KeyNotFoundException($"Book with ID {request.id} was not found.");
             }
 
             if (string.IsNullOrWhiteSpace(request.title) || string.IsNullOrWhiteSpace(request.description))

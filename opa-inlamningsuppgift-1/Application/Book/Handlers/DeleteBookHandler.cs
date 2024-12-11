@@ -1,5 +1,6 @@
 ﻿using Application.Book.Commands;
 using Application.Interfaces.RepositoryInterfaces;
+using Domain.Models;
 using MediatR;
 
 namespace Application.Book.Handlers
@@ -15,7 +16,7 @@ namespace Application.Book.Handlers
 
         public async Task<Unit> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
-            var book = await _bookRepository.GetBookById(request.id);
+            BookModel book = await _bookRepository.GetBookById(request.id);
 
             if (book == null)
             {
