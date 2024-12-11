@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("getAllUsers")]
+        [Route("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
             return Ok(await _mediator.Send(new GetAllUsersQuery()));
@@ -29,7 +29,7 @@ namespace API.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserDto newUser)
         {
-            return Ok(await _mediator.Send(new AddNewUserCommand(newUser)));
+            return Ok(await _mediator.Send(new AddUserCommand(newUser)));
         }
 
         [HttpPost]

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Application.User.Commands
 {
-    public class AddNewUserCommand : IRequest<UserModel>
+    public class AddUserCommand : IRequest<UserModel>
     {
-        public AddNewUserCommand(UserDto newUser)
+        public AddUserCommand(UserDto newUser)
         {
             NewUser = newUser;
         }
