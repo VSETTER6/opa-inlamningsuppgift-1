@@ -1,6 +1,7 @@
 ﻿using Application.Author.Commands;
 using Application.Author.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +17,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        [Authorize]
         [HttpPost("AddAuthor")]
         public async Task<IActionResult> AddAuthor([FromBody] AddAuthorCommand command)
         {
@@ -30,6 +32,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("DeleteAuthor")]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
@@ -45,6 +48,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetAllAuthors")]
         public async Task<IActionResult> GetAllAuthors()
         {
@@ -59,6 +63,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetAuthorById")]
         public async Task<IActionResult> GetAuthorById(Guid id)
         {
@@ -73,6 +78,7 @@ namespace API.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("UpdateAuthor")]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] UpdateAuthorCommand command)
         {

@@ -4,8 +4,6 @@ namespace Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        List<UserModel> Users { get; set; }
-
         Task<List<UserModel>> GetAllUsers();
 
         Task<UserModel> GetUserById(Guid id);
@@ -15,5 +13,7 @@ namespace Application.Interfaces.RepositoryInterfaces
         Task DeleteUser(Guid id);
 
         Task UpdateUser(Guid id, UserModel user);
+
+        Task<UserModel> GetUserByCredentials(string username, string password);
     }
 }
