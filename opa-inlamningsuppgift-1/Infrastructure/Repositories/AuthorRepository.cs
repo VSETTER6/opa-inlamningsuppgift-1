@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
 
             if (author == null)
             {
-                throw new KeyNotFoundException($"Author with ID {author.Id} not found.");
+                throw new KeyNotFoundException($"Author with ID {id} was not found.");
             }
 
             _realDatabase.Authors.Remove(author);
@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
 
             if (author == null)
             {
-                throw new KeyNotFoundException($"Author with ID {id} not found.");
+                throw new KeyNotFoundException($"Author with ID {id} was not found.");
             }
 
             return author;
@@ -56,7 +56,7 @@ namespace Infrastructure.Repositories
 
             if (existingAuthor == null)
             {
-                throw new KeyNotFoundException($"Author was not found.");
+                throw new KeyNotFoundException($"Author with ID {id} was not found.");
             }
 
             existingAuthor.FirstName = author.FirstName;

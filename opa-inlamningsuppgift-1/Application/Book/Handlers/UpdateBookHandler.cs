@@ -16,19 +16,31 @@ namespace Application.Book.Handlers
 
         public async Task<BookModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            BookModel bookToUpdate = await _bookRepository.GetBookById(request.id);
+            var bookToUpdate = await _bookRepository.GetBookById(request.id);
 
             if (bookToUpdate == null)
             {
                 throw new KeyNotFoundException($"Book with ID {request.id} not found.");
             }
 
-            bookToUpdate.Title = request.title;
-            bookToUpdate.Description = request.description;
+            if (string.IsNullOrWhiteSpace(request.title) || string.IsNullOrWhiteSpace(request.description))
+            {
+                throw new ArgumentException("None of title or description can be empty.");
+            }
 
-            await _bookRepository.UpdateBook(bookToUpdate.Id ,bookToUpdate);
+            try
+            {
+                bookToUpdate.Title = request.title;
+                bookToUpdate.Description = request.description;
 
-            return bookToUpdate;
+                await _bookRepository.UpdateBook(bookToUpdate.Id, bookToUpdate);
+
+                return bookToUpdate;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while updating the book. {ex}");
+            }
         }
     }
 }

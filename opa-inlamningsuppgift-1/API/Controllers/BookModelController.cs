@@ -1,4 +1,7 @@
-﻿using Application.Book.Commands;
+﻿using Application.Author.Commands;
+using Application.Author.Queries;
+using Application.Book.Commands;
+using Application.Book.Handlers;
 using Application.Book.Queries;
 using Domain.Models;
 using MediatR;
@@ -19,60 +22,77 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        // GET: api/<BookModelController>
-        [HttpGet]
-        public async Task<List<BookModel>> Get()
+        [HttpGet("GetAllBooks")]
+        public async Task<IActionResult> GetAllBooks()
         {
-            return await _mediator.Send(new GetAllBooksQuery());
+            try
+            {
+                var books = await _mediator.Send(new GetAllBooksQuery());
+                return Ok(books);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while getting the books. {ex}");
+            }
         }
 
-        // GET api/<BookModelController>/5
-        [HttpGet("{id}")]
-        public async Task<BookModel> Get(Guid id)
+        [HttpGet("GetBookById")]
+        public async Task<IActionResult> GetBookById(Guid id)
         {
-            return await _mediator.Send(new GetBookByIdQuery(id));
+            try
+            {
+                var book = await _mediator.Send(new GetBookByIdQuery(id));
+                return Ok(book);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while getting the book. {ex}");
+            }
         }
 
-        // POST api/<BookModelController>
-        [HttpPost]
+        [HttpPost("AddBook")]
         public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
         {
-            var result = await _mediator.Send(command);
-
-            if (result == null)
-            {
-                return BadRequest("Failed to add book.");
-            }
-
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
-        }
-
-
-        // PUT api/<BookModelController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand command)
-        {
-            if (id != command.id)
-            {
-                return BadRequest("ID does not match.");
-            }
-
             try
             {
                 var result = await _mediator.Send(command);
-                return Ok(result);
+
+                return CreatedAtAction(nameof(GetBookById), new { id = result.Id }, result);
             }
-            catch (ArgumentException ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest($"An error occurred while adding the book. {ex}");
             }
         }
 
-        // DELETE api/<BookModelController>/5
-        [HttpDelete("{id}")]
-        public async Task<bool> DeleteBook(Guid id)
+        [HttpPut("UpdateBook")]
+        public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookCommand command)
         {
-            return await _mediator.Send(new DeleteBookCommand(id));
+            try
+            {
+                await _mediator.Send(command);
+
+                return Ok($"Book with ID {id} has been successfully updated.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while updating the book. {ex}");
+            }
+        }
+
+        [HttpDelete("DeleteBook")]
+        public async Task<IActionResult> DeleteBook(Guid id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteBookCommand(id));
+
+                return Ok($"Book has been successfully deleted.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest($"An error occurred while deleting the book. {ex}");
+            }
         }
     }
 }

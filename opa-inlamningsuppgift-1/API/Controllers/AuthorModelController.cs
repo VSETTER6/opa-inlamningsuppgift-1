@@ -31,7 +31,7 @@ namespace API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest($"An error occurred while getting authors. {ex}");
+                return BadRequest($"An error occurred while getting the authors. {ex}");
             }
         }
 
@@ -40,12 +40,12 @@ namespace API.Controllers
         {
             try
             {
-                var authors = await _mediator.Send(new GetAuthorByIdQuery(id));
-                return Ok(authors);
+                var author = await _mediator.Send(new GetAuthorByIdQuery(id));
+                return Ok(author);
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest($"An error occurred while getting authors. {ex}");
+                return BadRequest($"An error occurred while getting the author. {ex}");
             }
         }
 

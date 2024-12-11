@@ -16,14 +16,16 @@ namespace Application.Author.Handlers
 
         public async Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.id == Guid.Empty)
+            var author = await _authorRepository.GetAuthorById(request.id);
+
+            if (author == null)
             {
-                throw new Exception("ID cannot be empty and must be GUID.");
+                throw new KeyNotFoundException($"Author with ID {request.id} was not found.");
             }
 
             try
             {
-                var author = await _authorRepository.GetAuthorById(request.id);
+                await _authorRepository.GetAuthorById(request.id);
                 return author;
             }
             catch (InvalidOperationException ex)
