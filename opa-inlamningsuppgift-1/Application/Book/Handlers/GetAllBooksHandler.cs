@@ -14,9 +14,17 @@ namespace Application.Book.Handlers
             _bookRepository = bookRepository;
         }
 
-        public Task<List<BookModel>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
+        public async Task<List<BookModel>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
         {
-            return _bookRepository.GetAllBooks();
+            try
+            {
+                var books = await _bookRepository.GetAllBooks();
+                return books;
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while getting the books. {ex}");
+            }
         }
     }
 }

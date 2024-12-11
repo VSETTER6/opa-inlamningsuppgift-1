@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Application.Book.Commands
 {
-    public record DeleteBookCommand(Guid id) : IRequest<bool>;
+    public record DeleteBookCommand(Guid id) : IRequest<Unit>;
 }

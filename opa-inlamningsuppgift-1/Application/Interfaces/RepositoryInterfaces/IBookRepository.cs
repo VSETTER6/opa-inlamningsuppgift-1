@@ -13,10 +13,10 @@ namespace Application.Interfaces.RepositoryInterfaces
 
         Task<BookModel> GetBookById(Guid id);
 
-        Task<BookModel> AddBook(BookModel book);
+        Task AddBook(BookModel book);
 
-        Task<string> DeleteBook(Guid id);
+        Task DeleteBook(Guid id);
 
-        Task<BookModel> UpdateBook(Guid id, BookModel book);
+        Task UpdateBook(Guid id, BookModel book);
     }
 }

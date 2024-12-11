@@ -14,20 +14,24 @@ namespace Application.Book.Handlers
             _bookRepository = bookRepository;
         }
 
-        public Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
+        public async Task<BookModel> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.id == Guid.Empty)
+            var book = await _bookRepository.GetBookById(request.id);
+
+            if (book == null)
             {
-                throw new ArgumentException("ID can not be empty.");
+                throw new KeyNotFoundException($"Book with ID {request.id} was not found.");
             }
 
-            var bookId = _bookRepository.GetBookById(request.id);
-            if (bookId == null)
+            try
             {
-                throw new KeyNotFoundException($"No book found with ID {request.id}.");
+                await _bookRepository.GetBookById(request.id);
+                return book;
             }
-
-            return bookId;
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"An error occurred while getting the book ID. {ex}");
+            }
         }
     }
 }

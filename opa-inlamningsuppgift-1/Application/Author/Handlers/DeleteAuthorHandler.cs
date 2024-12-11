@@ -25,7 +25,6 @@ namespace Application.Author.Handlers
             try
             {
                 await _authorRepository.DeleteAuthor(request.id);
-
                 return Unit.Value;
             }
             catch (InvalidOperationException ex)

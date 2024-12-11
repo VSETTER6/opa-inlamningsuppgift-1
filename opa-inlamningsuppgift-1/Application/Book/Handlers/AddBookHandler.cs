@@ -18,19 +18,25 @@ namespace Application.Book.Handlers
         {
             if (string.IsNullOrWhiteSpace(request.title) || string.IsNullOrWhiteSpace(request.description))
             {
-                throw new ArgumentException("Title and description cannot be empty.");
+                throw new ArgumentException("None of title or description can be empty.");
             }
 
-            BookModel newBook = new BookModel
+            try
             {
-                Id = Guid.NewGuid(),
-                Title = request.title,
-                Description = request.description
-            };
+                var newBook = new BookModel
+                {
+                    Id = Guid.NewGuid(),
+                    Title = request.title,
+                    Description = request.description
+                };
 
-            await _bookRepository.AddBook(newBook);
-
-            return newBook;
+                await _bookRepository.AddBook(newBook);
+                return newBook;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"An error occurred while adding the book. {ex}");
+            }
         }
     }
 }
