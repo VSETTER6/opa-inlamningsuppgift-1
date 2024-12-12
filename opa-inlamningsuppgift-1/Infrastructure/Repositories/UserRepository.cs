@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories
             _realDatabase = realDatabase;
         }
 
-        public async Task AddUser(UserModel user)
+        public async Task AddUser(User user)
         {
             await _realDatabase.Users.AddAsync(user);
             await _realDatabase.SaveChangesAsync();
@@ -33,17 +33,17 @@ namespace Infrastructure.Repositories
             await _realDatabase.SaveChangesAsync();
         }
 
-        public async Task<List<UserModel>> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
             return await _realDatabase.Users.ToListAsync();
         }
 
-        public async Task<UserModel> GetUserByCredentials(string username, string password)
+        public async Task<User> GetUserByCredentials(string username, string password)
         {
             return await _realDatabase.Users.FirstOrDefaultAsync(user => user.UserName == username && user.Password == password);
         }
 
-        public async Task<UserModel> GetUserById(Guid id)
+        public async Task<User> GetUserById(Guid id)
         {
             var user = await _realDatabase.Users.FirstOrDefaultAsync(user => user.Id == id);
 
@@ -55,7 +55,7 @@ namespace Infrastructure.Repositories
             return user;
         }
 
-        public async Task UpdateUser(Guid id, UserModel user)
+        public async Task UpdateUser(Guid id, User user)
         {
             var existingUser = await _realDatabase.Users.FirstOrDefaultAsync(user => user.Id == id);
 

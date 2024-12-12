@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Author.Commands
 {
-    public record UpdateAuthorCommand(Guid id, string firstName, string lastName, string category) : IRequest<AuthorModel>;
+    public record UpdateAuthorCommand(Guid id, string firstName, string lastName, string category) : IRequest<Domain.Models.Author>;
 }

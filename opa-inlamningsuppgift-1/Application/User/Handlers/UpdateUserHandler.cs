@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.User.Handlers
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserModel>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Domain.Models.User>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,7 +14,7 @@ namespace Application.User.Handlers
             _userRepository = userRepository;   
         }
 
-        public async Task<UserModel> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.User> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var userToUpdate = await _userRepository.GetUserById(request.id);
 

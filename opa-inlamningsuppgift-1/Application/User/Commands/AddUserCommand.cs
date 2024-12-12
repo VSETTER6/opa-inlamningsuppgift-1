@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.User.Commands
 {
-    public record AddUserCommand(UserDto userDto) : IRequest<UserModel>;
+    public record AddUserCommand(UserDto userDto) : IRequest<Domain.Models.User>;
 }

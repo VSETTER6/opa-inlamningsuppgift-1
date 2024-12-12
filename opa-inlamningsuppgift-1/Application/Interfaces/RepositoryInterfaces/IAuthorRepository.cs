@@ -4,14 +4,14 @@ namespace Application.Interfaces.RepositoryInterfaces
 {
     public interface IAuthorRepository
     {
-        Task<List<AuthorModel>> GetAllAuthors();
+        Task<List<Domain.Models.Author>> GetAllAuthors();
 
-        Task<AuthorModel> GetAuthorById(Guid id);
+        Task<Domain.Models.Author> GetAuthorById(Guid id);
 
-        Task AddAuthor(AuthorModel author);
+        Task AddAuthor(Domain.Models.Author author);
 
         Task DeleteAuthor(Guid id);
 
-        Task UpdateAuthor(Guid id, AuthorModel author);
+        Task UpdateAuthor(Guid id, Domain.Models.Author author);
     }
 }

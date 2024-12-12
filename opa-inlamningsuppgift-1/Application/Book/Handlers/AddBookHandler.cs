@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Book.Handlers
 {
-    public class AddBookHandler : IRequestHandler<AddBookCommand, BookModel>
+    public class AddBookHandler : IRequestHandler<AddBookCommand, Domain.Models.Book>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,7 +14,7 @@ namespace Application.Book.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<BookModel> Handle(AddBookCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.Book> Handle(AddBookCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.title) || string.IsNullOrWhiteSpace(request.description))
             {
@@ -23,7 +23,7 @@ namespace Application.Book.Handlers
 
             try
             {
-                BookModel newBook = new BookModel
+                Domain.Models.Book newBook = new Domain.Models.Book
                 {
                     Id = Guid.NewGuid(),
                     Title = request.title,

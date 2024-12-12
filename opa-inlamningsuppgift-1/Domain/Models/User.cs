@@ -1,6 +1,6 @@
 ﻿namespace Domain.Models
 {
-    public class UserModel
+    public class User
     {
         public Guid Id { get; set; }
         public string UserName { get; set; } = string.Empty;

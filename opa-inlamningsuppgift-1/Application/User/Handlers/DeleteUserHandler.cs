@@ -16,7 +16,7 @@ namespace Application.User.Handlers
 
         public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            UserModel user = await _userRepository.GetUserById(request.id);
+            Domain.Models.User user = await _userRepository.GetUserById(request.id);
 
             if (user == null)
             {

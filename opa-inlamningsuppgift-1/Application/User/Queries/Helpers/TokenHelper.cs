@@ -16,7 +16,7 @@ namespace Application.User.Queries.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(UserModel user)
+        public string GenerateJwtToken(Domain.Models.User user)
         {
             var key = Encoding.ASCII.GetBytes(s: _configuration["JwtSettings:SecretKey"]!);
 

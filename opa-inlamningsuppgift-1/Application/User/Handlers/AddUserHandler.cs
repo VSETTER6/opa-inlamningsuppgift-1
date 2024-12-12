@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.User.Handlers
 {
-    internal sealed class AddUserHandler : IRequestHandler<AddUserCommand, UserModel>
+    internal sealed class AddUserHandler : IRequestHandler<AddUserCommand, Domain.Models.User>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,7 +14,7 @@ namespace Application.User.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<UserModel> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.User> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.userDto.Username) || string.IsNullOrWhiteSpace(request.userDto.Password))
             {
@@ -23,7 +23,7 @@ namespace Application.User.Handlers
 
             try
             {
-                UserModel newUser = new UserModel
+                Domain.Models.User newUser = new Domain.Models.User
                 {
                     Id = Guid.NewGuid(),
                     UserName = request.userDto.Username,

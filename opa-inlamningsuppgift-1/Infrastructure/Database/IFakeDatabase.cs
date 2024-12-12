@@ -4,18 +4,18 @@ namespace Infrastructure.Database
 {
     public interface IFakeDatabase
     {
-        List<BookModel> GetAllBooks();
-        BookModel GetBookById(Guid id);
-        void AddBook(BookModel newBook);
+        List<Book> GetAllBooks();
+        Book GetBookById(Guid id);
+        void AddBook(Book newBook);
         void DeleteBook(Guid id);
-        void UpdateBook(BookModel updatedBook);
+        void UpdateBook(Book updatedBook);
 
-        List<AuthorModel> GetAllAuthors();
-        AuthorModel GetAuthorById(Guid id);
-        void AddAuthor(AuthorModel newAuthor);
+        List<Author> GetAllAuthors();
+        Author GetAuthorById(Guid id);
+        void AddAuthor(Author newAuthor);
         void DeleteAuthor(Guid id);
-        void UpdateAuthor(AuthorModel updatedAuthor);
+        void UpdateAuthor(Author updatedAuthor);
 
-        List<UserModel> Users { get; set; }
+        List<User> Users { get; set; }
     }
 }

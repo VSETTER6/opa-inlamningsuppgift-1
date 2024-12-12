@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Book.Handlers
 {
-    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, BookModel>
+    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Domain.Models.Book>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,9 +14,9 @@ namespace Application.Book.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<BookModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.Book> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            BookModel bookToUpdate = await _bookRepository.GetBookById(request.id);
+            Domain.Models.Book bookToUpdate = await _bookRepository.GetBookById(request.id);
 
             if (bookToUpdate == null)
             {

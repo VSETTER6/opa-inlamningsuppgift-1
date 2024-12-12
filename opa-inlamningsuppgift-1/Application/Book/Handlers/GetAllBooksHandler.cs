@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Book.Handlers
 {
-    public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, List<BookModel>>
+    public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, List<Domain.Models.Book>>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,7 +14,7 @@ namespace Application.Book.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<List<BookModel>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
+        public async Task<List<Domain.Models.Book>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
         {
             try
             {

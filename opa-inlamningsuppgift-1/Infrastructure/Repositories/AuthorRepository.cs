@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories
             _realDatabase = realDatabase;
         }
 
-        public async Task AddAuthor(AuthorModel author)
+        public async Task AddAuthor(Author author)
         {
             await _realDatabase.Authors.AddAsync(author);
             await _realDatabase.SaveChangesAsync();
@@ -33,12 +33,12 @@ namespace Infrastructure.Repositories
             await _realDatabase.SaveChangesAsync();
         }
 
-        public async Task<List<AuthorModel>> GetAllAuthors()
+        public async Task<List<Author>> GetAllAuthors()
         {
             return await _realDatabase.Authors.ToListAsync();
         }
 
-        public async Task<AuthorModel> GetAuthorById(Guid id)
+        public async Task<Author> GetAuthorById(Guid id)
         {
             var author = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
 
@@ -50,7 +50,7 @@ namespace Infrastructure.Repositories
             return author;
         }
 
-        public async Task UpdateAuthor(Guid id, AuthorModel author)
+        public async Task UpdateAuthor(Guid id, Author author)
         {
             var existingAuthor = await _realDatabase.Authors.FirstOrDefaultAsync(author => author.Id == id);
 
