@@ -27,7 +27,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new AddUserCommand(newUser));
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -50,7 +50,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new DeleteUserCommand(id));
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -73,7 +73,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new GetAllUsersQuery());
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -96,7 +96,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new GetUserByIdQuery(id));
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -125,7 +125,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(command);
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }

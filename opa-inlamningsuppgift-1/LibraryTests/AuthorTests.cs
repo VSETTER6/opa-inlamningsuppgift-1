@@ -2,6 +2,7 @@
 using Application.Authors.Handlers;
 using Application.Authors.Queries;
 using Application.Interfaces.RepositoryInterfaces;
+using Azure.Core;
 using Domain.Models;
 using Moq;
 
@@ -28,17 +29,16 @@ public class AuthorTests
 
         mockDatabase.Setup(datebase => datebase.GetAllAuthors()).ReturnsAsync(mockAuthorsList);
 
-        var handler = new GetAllAuthorsHandler(mockDatabase.Object);
-
         // Act
+        var handler = new GetAllAuthorsHandler(mockDatabase.Object);
         var result = await handler.Handle(new GetAllAuthorsQuery(), CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
-        Assert.That(result.Count, Is.EqualTo(2));
-        Assert.That(result[0].FirstName, Is.EqualTo("FirstName1"));
-        Assert.That(result[1].LastName, Is.EqualTo("LastName2"));
-        Assert.That(result[1].Category, Is.EqualTo("Category2"));
+        Assert.That(result.Data.Count, Is.EqualTo(2));
+        Assert.That(result.Data[0].FirstName, Is.EqualTo("FirstName1"));
+        Assert.That(result.Data[1].LastName, Is.EqualTo("LastName2"));
+        Assert.That(result.Data[1].Category, Is.EqualTo("Category2"));
     }
 
     [Test]
@@ -58,33 +58,33 @@ public class AuthorTests
         mockDatabase.Setup(datebase => datebase.GetAuthorById(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid id) => mockAuthorsList.FirstOrDefault(author => author.Id == id));
 
-        var handler = new GetAuthorByIdHandler(mockDatabase.Object);
-
         // Act
+        var handler = new GetAuthorByIdHandler(mockDatabase.Object);
         var result = await handler.Handle(new GetAuthorByIdQuery(id), CancellationToken.None);
+        var expectedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
 
         // Assert
-        var expectedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
         Assert.NotNull(result);
-        Assert.That(result, Is.EqualTo(expectedAuthor));
+        Assert.That(result.Data, Is.EqualTo(expectedAuthor));
     }
 
     [Test]
     [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
     [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
-    public async Task GetAuthorByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(Guid id)
+    public async Task GetAuthorByIdHandler_ShouldReturnErrorMessage_WhenIdIsInvalid(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
         var handler = new GetAuthorByIdHandler(mockDatabase.Object);
-
         var query = new GetAuthorByIdQuery(id);
 
-        // Act & Assert
-        var expectedException = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                        await handler.Handle(query, CancellationToken.None));
+        // Act
+        var result = await handler.Handle(query, CancellationToken.None);
 
-        Assert.That(expectedException.Message, Is.EqualTo($"Author with ID {id} was not found."));
+        // Assert
+        Assert.NotNull(result);
+        Assert.That(result.IsSuccessful, Is.False);
+        Assert.That(result.ErrorMessage, Is.EqualTo($"Author with ID {id} was not found."));
     }
 
     [Test]
@@ -92,7 +92,7 @@ public class AuthorTests
     [TestCase("", "Valid Description", "", false)]
     [TestCase("Valid Title", "", "", false)]
     [TestCase("", "", "", false)]
-    public async Task AddAuthorHandler_ShouldHandleAddingAuthor(string firstName, string lastName, string category, bool isValid)
+    public async Task AddAuthorHandler_ShouldHandleAddingAuthor(string firstName, string lastName, string category, bool isSucessful)
     {
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
@@ -106,29 +106,26 @@ public class AuthorTests
         mockDatabase.Setup(database => database.GetAllAuthors()).ReturnsAsync(mockAuthorsList);
         mockDatabase.Setup(database => database.AddAuthor(It.IsAny<Author>()))
                     .Callback<Author>(author => mockAuthorsList.Add(author));
-
+        
+        // Act
         var handler = new AddAuthorHandler(mockDatabase.Object);
         var command = new AddAuthorCommand(firstName, lastName, category);
+        var result = await handler.Handle(command, CancellationToken.None);
 
-        // Act
-        if (isValid)
+        // Assert
+        if (isSucessful)
         {
-            var result = await handler.Handle(command, CancellationToken.None);
-
-            // Assert
             Assert.NotNull(result);
-            Assert.That(result.FirstName, Is.EqualTo(firstName));
-            Assert.That(result.LastName, Is.EqualTo(lastName));
-            Assert.That(result.Category, Is.EqualTo(category));
-            Assert.IsTrue(mockAuthorsList.Any(author => author.Id == result.Id));
+            Assert.That(result.Data.FirstName, Is.EqualTo(firstName));
+            Assert.That(result.Data.LastName, Is.EqualTo(lastName));
+            Assert.That(result.Data.Category, Is.EqualTo(category));
+            Assert.IsTrue(mockAuthorsList.Any(author => author.Id == result.Data.Id));
         }
         else
         {
-            // Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
-                await handler.Handle(command, CancellationToken.None));
-
-            Assert.That(exception.Message, Is.EqualTo("None of first name, last name or category can be empty."));
+            Assert.NotNull(result);
+            Assert.That(result.IsSuccessful, Is.False);
+            Assert.That(result.ErrorMessage, Is.EqualTo("None of first name, last name or category can be empty."));
         }
     }
 
@@ -141,33 +138,32 @@ public class AuthorTests
         var mockDatabase = new Mock<IAuthorRepository>();
 
         var mockAuthorsList = new List<Author>
-    {
-        new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-        new Author { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
-    };
+        {
+            new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new Author { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+        };
 
         mockDatabase.Setup(database => database.GetAuthorById(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid authorId) => mockAuthorsList.FirstOrDefault(author => author.Id == authorId));
         mockDatabase.Setup(database => database.DeleteAuthor(It.IsAny<Guid>()))
                     .Callback<Guid>(authorId => mockAuthorsList.RemoveAll(author => author.Id == authorId));
 
+        // Act
         var handler = new DeleteAuthorHandler(mockDatabase.Object);
         var command = new DeleteAuthorCommand(id);
+        var result = await handler.Handle(command, CancellationToken.None);
 
-        // Act & Assert
+        // Assert
         if (Guid.TryParse("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", out Guid parsedGuid) && id == parsedGuid)
         {
-            await handler.Handle(command, CancellationToken.None);
-
             Assert.That(mockAuthorsList.Count, Is.EqualTo(1));
             Assert.IsNull(mockAuthorsList.FirstOrDefault(author => author.Id == parsedGuid));
         }
         else
         {
-            var exception = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                            await handler.Handle(command, CancellationToken.None));
-
-            Assert.That(exception.Message, Is.EqualTo($"Author with ID {id} was not found."));
+            Assert.NotNull(result);
+            Assert.That(result.IsSuccessful, Is.False);
+            Assert.That(result.ErrorMessage, Is.EqualTo($"Author with ID {id} was not found."));
         }
     }
 
@@ -198,14 +194,13 @@ public class AuthorTests
                         }
                     });
 
+        // Act
         var handler = new UpdateAuthorHandler(mockDatabase.Object);
         var command = new UpdateAuthorCommand(id, newFirstName, newLastName, newCategory);
-
-        // Act
         var result = await handler.Handle(command, CancellationToken.None);
+        var updatedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
 
         // Assert
-        var updatedAuthor = mockAuthorsList.FirstOrDefault(author => author.Id == id);
         Assert.NotNull(result);
         Assert.That(updatedAuthor.FirstName, Is.EqualTo(newFirstName));
         Assert.That(updatedAuthor.LastName, Is.EqualTo(newLastName));
