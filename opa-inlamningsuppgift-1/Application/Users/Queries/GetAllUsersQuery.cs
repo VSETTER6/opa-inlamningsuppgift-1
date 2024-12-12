@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Users.Queries
 {
-    public record GetAllUsersQuery : IRequest<List<User>>;
+    public record GetAllUsersQuery : IRequest<OperationResult<List<User>>>;
 }

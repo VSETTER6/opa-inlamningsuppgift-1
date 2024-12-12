@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Books.Handlers
 {
-    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Unit>
+    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, OperationResult<Unit>>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,24 +14,19 @@ namespace Application.Books.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<Unit> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
             Book book = await _bookRepository.GetBookById(request.id);
 
             if (book == null)
             {
-                throw new KeyNotFoundException($"Book with ID {request.id} was not found.");
+                return OperationResult<Unit>.Failed($"Book with ID {request.id} was not found.");
             }
-
-            try
+            else
             {
                 await _bookRepository.DeleteBook(request.id);
 
-                return Unit.Value;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while deleting the book. {ex}");
+                return OperationResult<Unit>.Successful(Unit.Value);
             }
         }
     }

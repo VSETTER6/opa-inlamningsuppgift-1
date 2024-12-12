@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Books.Commands
 {
-    public record AddBookCommand(string title, string description) : IRequest<Book>;
+    public record AddBookCommand(string title, string description) : IRequest<OperationResult<Book>>;
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Authors.Handlers
 {
-    public class AddAuthorHandler : IRequestHandler<AddAuthorCommand, Domain.Models.Author>
+    public class AddAuthorHandler : IRequestHandler<AddAuthorCommand, OperationResult<Author>>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,16 +14,15 @@ namespace Application.Authors.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<Domain.Models.Author> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Author>> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))
             {
-                throw new ArgumentException("None of first name, last name or category can be empty.");
+                return OperationResult<Author>.Failed("None of first name, last name or category can be empty.");
             }
-
-            try
+            else
             {
-                Domain.Models.Author newAuthor = new Domain.Models.Author
+                Author newAuthor = new Author
                 {
                     Id = Guid.NewGuid(),
                     FirstName = request.firstName,
@@ -32,11 +31,7 @@ namespace Application.Authors.Handlers
                 };
 
                 await _authorRepository.AddAuthor(newAuthor);
-                return newAuthor;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"An error occurred while adding the author. {ex}");
+                return OperationResult<Author>.Successful(newAuthor);
             }
         }
     }

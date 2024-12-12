@@ -1,6 +1,7 @@
 ﻿using Application.Users.Commands;
 using Application.Users.DTOS;
 using Application.Users.Queries;
+using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,16 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _mediator.Send(new AddUserCommand(newUser));
-                return CreatedAtAction(nameof(GetUserById), new { id = result.Id }, result);
+                var operationResult = await _mediator.Send(new AddUserCommand(newUser));
+
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -39,9 +48,16 @@ namespace API.Controllers
         {
             try
             {
-                await _mediator.Send(new DeleteUserCommand(id));
+                var operationResult = await _mediator.Send(new DeleteUserCommand(id));
 
-                return Ok($"User has been successfully deleted.");
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -55,8 +71,16 @@ namespace API.Controllers
         {
             try
             {
-                var users = await _mediator.Send(new GetAllUsersQuery());
-                return Ok(users);
+                var operationResult = await _mediator.Send(new GetAllUsersQuery());
+
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -70,8 +94,16 @@ namespace API.Controllers
         {
             try
             {
-                var user = await _mediator.Send(new GetUserByIdQuery(id));
-                return Ok(user);
+                var operationResult = await _mediator.Send(new GetUserByIdQuery(id));
+
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -91,9 +123,16 @@ namespace API.Controllers
         {
             try
             {
-                await _mediator.Send(command);
+                var operationResult = await _mediator.Send(command);
 
-                return Ok($"User with ID {id} has been successfully updated.");
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {

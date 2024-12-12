@@ -2,10 +2,11 @@
 using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
 using MediatR;
+using System.Collections.Generic;
 
 namespace Application.Authors.Handlers
 {
-    public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, List<Domain.Models.Author>>
+    public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, OperationResult<List<Author>>>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,16 +15,17 @@ namespace Application.Authors.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<List<Domain.Models.Author>> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Author>>> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
         {
-            try
+            var authors = await _authorRepository.GetAllAuthors();
+
+            if (authors == null)
             {
-                var authors = await _authorRepository.GetAllAuthors();
-                return authors;
+                return OperationResult<List<Author>>.Failed("An error occurred while getting the authors.");
             }
-            catch (InvalidOperationException ex)
+            else
             {
-                throw new InvalidOperationException($"An error occurred while getting the authors. {ex}");
+                return OperationResult<List<Author>>.Successful(authors);
             }
         }
     }

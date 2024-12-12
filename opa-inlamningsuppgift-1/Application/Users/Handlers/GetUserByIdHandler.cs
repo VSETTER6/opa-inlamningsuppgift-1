@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, User>
+    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, OperationResult<User>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,23 +14,18 @@ namespace Application.Users.Handlers
             _userRepository = userRepository; 
         }
 
-        public async Task<User> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<User>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
             User user = await _userRepository.GetUserById(request.id);
 
             if (user == null)
             {
-                throw new KeyNotFoundException($"User with ID {request.id} was not found.");
+                return OperationResult<User>.Failed($"User with ID {request.id} was not found.");
             }
-
-            try
+            else
             {
                 await _userRepository.GetUserById(request.id);
-                return user;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while getting the user ID. {ex}");
+                return OperationResult<User>.Successful(user);
             }
         }
     }

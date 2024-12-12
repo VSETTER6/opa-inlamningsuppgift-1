@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Authors.Handlers
 {
-    public class UpdateAuthorHandler : IRequestHandler<UpdateAuthorCommand, Domain.Models.Author>
+    public class UpdateAuthorHandler : IRequestHandler<UpdateAuthorCommand, OperationResult<Author>>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,21 +14,19 @@ namespace Application.Authors.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<Domain.Models.Author> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Author>> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-            Domain.Models.Author authorToUpdate = await _authorRepository.GetAuthorById(request.id);
+            Author authorToUpdate = await _authorRepository.GetAuthorById(request.id);
 
             if (authorToUpdate == null)
             {
-                throw new KeyNotFoundException($"Author with ID {request.id} was not found.");
+                return OperationResult<Author>.Failed($"Author with ID {request.id} was not found.");
             }
-
             if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))
             {
-                throw new ArgumentException("First name, last name, and category cannot be empty.");
+                return OperationResult<Author>.Failed("First name, last name, and category cannot be empty.");
             }
-
-            try
+            else
             {
                 authorToUpdate.FirstName = request.firstName;
                 authorToUpdate.LastName = request.lastName;
@@ -36,11 +34,7 @@ namespace Application.Authors.Handlers
 
                 await _authorRepository.UpdateAuthor(authorToUpdate.Id, authorToUpdate);
 
-                return authorToUpdate;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while updating the author. {ex}");
+                return OperationResult<Author>.Successful(authorToUpdate);
             }
         }
     }

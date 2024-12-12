@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Users.Handlers
 {
-    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, User>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, OperationResult<User>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,32 +14,26 @@ namespace Application.Users.Handlers
             _userRepository = userRepository;   
         }
 
-        public async Task<User> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<User>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var userToUpdate = await _userRepository.GetUserById(request.id);
 
             if (userToUpdate == null)
             {
-                throw new KeyNotFoundException($"User with ID {request.id} was not found.");
+                return OperationResult<User>.Failed($"User with ID {request.id} was not found.");
             }
-
             if (string.IsNullOrWhiteSpace(request.username) || string.IsNullOrWhiteSpace(request.password))
             {
-                throw new ArgumentException("None of username or password can be empty.");
+                return OperationResult<User>.Failed("None of username or password can be empty.");
             }
-
-            try
+            else
             {
                 userToUpdate.UserName = request.username;
                 userToUpdate.Password = request.password;
 
                 await _userRepository.UpdateUser(userToUpdate.Id, userToUpdate);
 
-                return userToUpdate;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while updating the user. {ex}");
+                return OperationResult<User>.Successful(userToUpdate);
             }
         }
     }
