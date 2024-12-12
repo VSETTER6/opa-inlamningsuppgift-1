@@ -1,6 +1,6 @@
-﻿using Application.Book.Commands;
-using Application.Book.Handlers;
-using Application.Book.Queries;
+﻿using Application.Books.Commands;
+using Application.Books.Handlers;
+using Application.Books.Queries;
 using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
 using Moq;

@@ -1,6 +1,6 @@
 using Application;
 using Infrastructure;
-using Application.User.Queries.Helpers;
+using Application.Users.Queries.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
