@@ -29,16 +29,15 @@ public class BookTests
 
         mockDatabase.Setup(datebase => datebase.GetAllBooks()).ReturnsAsync(mockBooksList);
 
-        var handler = new GetAllBooksHandler(mockDatabase.Object);
-
         // Act
+        var handler = new GetAllBooksHandler(mockDatabase.Object);
         var result = await handler.Handle(new GetAllBooksQuery(), CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
-        Assert.That(result.Count, Is.EqualTo(2));
-        Assert.AreEqual("BookTitle1", result[0].Title);
-        Assert.That(result[1].Description, Is.EqualTo("Description2"));
+        Assert.That(result.Data.Count, Is.EqualTo(2));
+        Assert.That(result.Data[0].Title, Is.EqualTo("BookTitle1"));
+        Assert.That(result.Data[1].Description, Is.EqualTo("Description2"));
     }
 
     [Test]
@@ -59,33 +58,34 @@ public class BookTests
         mockDatabase.Setup(datebase => datebase.GetBookById(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid id) => mockBooksList.FirstOrDefault(book => book.Id == id));
 
-        var handler = new GetBookByIdHandler(mockDatabase.Object);
-
         // Act
+        var handler = new GetBookByIdHandler(mockDatabase.Object);
         var result = await handler.Handle(new GetBookByIdQuery(id), CancellationToken.None);
+        var expectedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
 
         // Assert
-        var expectedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
         Assert.NotNull(result);
-        Assert.That(result, Is.EqualTo(expectedBook));
+        Assert.That(result.Data, Is.EqualTo(expectedBook));
     }
 
     [Test]
     [TestCase("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f")]
     [TestCase("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295")]
-    public void GetBookByIdHandler_ShouldThrowArgumentException_WhenIdIsInvalid(Guid id)
+    public async Task GetBookByIdHandler_ShouldReturnErrorMessage_WhenIdIsInvalidAsync(Guid id)
     {
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
         var handler = new GetBookByIdHandler(mockDatabase.Object);
-
         var query = new GetBookByIdQuery(id);
 
-        // Act & Assert
-        var expectedException = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                                await handler.Handle(query, CancellationToken.None));
+        // Act
+        var result = await handler.Handle(query, CancellationToken.None);
 
-        Assert.That(expectedException.Message, Is.EqualTo($"Book with ID {id} was not found."));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.That(result.IsSuccessful, Is.False);
+        Assert.That(result.ErrorMessage, Is.EqualTo($"Book with ID {id} was not found."));
     }
 
     [Test]
@@ -93,7 +93,7 @@ public class BookTests
     [TestCase("", "Valid Description", false)]
     [TestCase("Valid Title", "", false)]
     [TestCase("", "", false)]
-    public async Task AddBookHandler_ShouldHandleAddingBook(string title, string description, bool isValid)
+    public async Task AddBookHandler_ShouldHandleAddingBook(string title, string description, bool isSuccessful)
     {
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
@@ -108,27 +108,24 @@ public class BookTests
         mockDatabase.Setup(database => database.AddBook(It.IsAny<Book>()))
                     .Callback<Book>(book => mockBooksList.Add(book));
 
+        // Act
         var handler = new AddBookHandler(mockDatabase.Object);
         var command = new AddBookCommand(title, description);
+        var result = await handler.Handle(command, CancellationToken.None);
 
-        // Act
-        if (isValid)
+        // Assert
+        if (isSuccessful)
         {
-            var result = await handler.Handle(command, CancellationToken.None);
-
-            // Assert
             Assert.NotNull(result);
-            Assert.That(result.Title, Is.EqualTo(title));
-            Assert.That(result.Description, Is.EqualTo(description));
-            Assert.IsTrue(mockBooksList.Any(book => book.Id == result.Id));
+            Assert.That(result.Data.Title, Is.EqualTo(title));
+            Assert.That(result.Data.Description, Is.EqualTo(description));
+            Assert.IsTrue(mockBooksList.Any(book => book.Id == result.Data.Id));
         }
         else
         {
-            // Assert
-            var exception = Assert.ThrowsAsync<ArgumentException>(async () =>
-                await handler.Handle(command, CancellationToken.None));
-
-            Assert.That(exception.Message, Is.EqualTo("None of title or description can be empty."));
+            Assert.NotNull(result);
+            Assert.That(result.IsSuccessful, Is.False);
+            Assert.That(result.ErrorMessage, Is.EqualTo("None of title or description can be empty."));
         }
     }
 
@@ -151,23 +148,24 @@ public class BookTests
         mockDatabase.Setup(database => database.DeleteBook(It.IsAny<Guid>()))
                     .Callback<Guid>(bookId => mockBooksList.RemoveAll(book => book.Id == bookId));
 
+        // Act
         var handler = new DeleteBookHandler(mockDatabase.Object);
         var command = new DeleteBookCommand(id);
+        var result = await handler.Handle(command, CancellationToken.None);
 
-        // Act & Assert
+        // Assert
         if (Guid.TryParse("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f", out Guid parsedGuid) && id == parsedGuid)
         {
-            await handler.Handle(command, CancellationToken.None);
-
             Assert.AreEqual(1, mockBooksList.Count);
             Assert.IsNull(mockBooksList.FirstOrDefault(book => book.Id == parsedGuid));
         }
         else
         {
-            var exception = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
-                            await handler.Handle(command, CancellationToken.None));
 
-            Assert.That(exception.Message, Is.EqualTo($"Book with ID {id} was not found."));
+
+            Assert.NotNull(result);
+            Assert.That(result.IsSuccessful, Is.False);
+            Assert.That(result.ErrorMessage, Is.EqualTo($"Book with ID {id} was not found."));
         }
     }
 
@@ -197,16 +195,15 @@ public class BookTests
                         }
                     });
 
+        // Act
         var handler = new UpdateBookHandler(mockDatabase.Object);
         var command = new UpdateBookCommand(id, newTitle, newDescription);
-
-        // Act
         var result = await handler.Handle(command, CancellationToken.None);
+        var updatedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
 
         // Assert
-        var updatedBook = mockBooksList.FirstOrDefault(book => book.Id == id);
         Assert.NotNull(result);
-        Assert.AreEqual(newTitle, updatedBook.Title);
-        Assert.AreEqual(newDescription, updatedBook.Description);
+        Assert.That(updatedBook.Title, Is.EqualTo(newTitle));
+        Assert.That(updatedBook.Description, Is.EqualTo(newDescription));
     }
 }

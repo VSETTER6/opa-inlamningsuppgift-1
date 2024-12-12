@@ -26,7 +26,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(command);
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -49,7 +49,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new DeleteBookCommand(id));
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -72,7 +72,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new GetAllBooksQuery());
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -95,7 +95,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(new GetBookByIdQuery(id));
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
@@ -118,7 +118,7 @@ namespace API.Controllers
             {
                 var operationResult = await _mediator.Send(command);
 
-                if (operationResult.Success)
+                if (operationResult.IsSuccessful)
                 {
                     return Ok(new { message = operationResult.Message, data = operationResult.Data });
                 }
