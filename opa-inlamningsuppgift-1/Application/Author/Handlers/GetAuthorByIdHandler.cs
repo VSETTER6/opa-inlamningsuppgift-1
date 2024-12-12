@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Author.Handlers
 {
-    public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, AuthorModel>
+    public class GetAuthorByIdHandler : IRequestHandler<GetAuthorByIdQuery, Domain.Models.Author>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,9 +14,9 @@ namespace Application.Author.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<AuthorModel> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
-            AuthorModel author = await _authorRepository.GetAuthorById(request.id);
+            Domain.Models.Author author = await _authorRepository.GetAuthorById(request.id);
 
             if (author == null)
             {

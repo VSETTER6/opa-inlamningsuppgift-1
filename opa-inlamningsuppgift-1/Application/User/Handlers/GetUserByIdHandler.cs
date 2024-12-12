@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.User.Handlers
 {
-    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, UserModel>
+    public class GetUserByIdHandler : IRequestHandler<GetUserByIdQuery, Domain.Models.User>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,9 +14,9 @@ namespace Application.User.Handlers
             _userRepository = userRepository; 
         }
 
-        public async Task<UserModel> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.User> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            UserModel user = await _userRepository.GetUserById(request.id);
+            Domain.Models.User user = await _userRepository.GetUserById(request.id);
 
             if (user == null)
             {

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Author.Handlers
 {
-    public class AddAuthorHandler : IRequestHandler<AddAuthorCommand, AuthorModel>
+    public class AddAuthorHandler : IRequestHandler<AddAuthorCommand, Domain.Models.Author>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,7 +14,7 @@ namespace Application.Author.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<AuthorModel> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Models.Author> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.firstName) || string.IsNullOrWhiteSpace(request.lastName) || string.IsNullOrWhiteSpace(request.category))
             {
@@ -23,7 +23,7 @@ namespace Application.Author.Handlers
 
             try
             {
-                AuthorModel newAuthor = new AuthorModel
+                Domain.Models.Author newAuthor = new Domain.Models.Author
                 {
                     Id = Guid.NewGuid(),
                     FirstName = request.firstName,

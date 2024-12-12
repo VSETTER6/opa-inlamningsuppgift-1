@@ -21,10 +21,10 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
 
-        var mockBooksList = new List<BookModel>
+        var mockBooksList = new List<Book>
         {
-            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
-            new BookModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
+            new Book { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
+            new Book { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetAllBooks()).ReturnsAsync(mockBooksList);
@@ -50,10 +50,10 @@ public class BookTests
         var mockDatabase = new Mock<IBookRepository>();
 
         var bookId = Guid.NewGuid();
-        var mockBooksList = new List<BookModel>
+        var mockBooksList = new List<Book>
         {
-            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
-            new BookModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
+            new Book { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1"},
+            new Book { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), Title = "BookTitle2", Description = "Description2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetBookById(It.IsAny<Guid>()))
@@ -98,15 +98,15 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
 
-        var mockBooksList = new List<BookModel>
+        var mockBooksList = new List<Book>
     {
-        new BookModel { Id = Guid.NewGuid(), Title = "Book 1", Description = "Description 1" },
-        new BookModel { Id = Guid.NewGuid(), Title = "Book 2", Description = "Description 2" }
+        new Book { Id = Guid.NewGuid(), Title = "Book 1", Description = "Description 1" },
+        new Book { Id = Guid.NewGuid(), Title = "Book 2", Description = "Description 2" }
     };
 
         mockDatabase.Setup(database => database.GetAllBooks()).ReturnsAsync(mockBooksList);
-        mockDatabase.Setup(database => database.AddBook(It.IsAny<BookModel>()))
-                    .Callback<BookModel>(book => mockBooksList.Add(book));
+        mockDatabase.Setup(database => database.AddBook(It.IsAny<Book>()))
+                    .Callback<Book>(book => mockBooksList.Add(book));
 
         var handler = new AddBookHandler(mockDatabase.Object);
         var command = new AddBookCommand(title, description);
@@ -140,10 +140,10 @@ public class BookTests
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
 
-        var mockBooksList = new List<BookModel>
+        var mockBooksList = new List<Book>
         {
-            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1" },
-            new BookModel { Id = Guid.NewGuid(), Title = "BookTitle2", Description = "Description2" }
+            new Book { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "BookTitle1", Description = "Description1" },
+            new Book { Id = Guid.NewGuid(), Title = "BookTitle2", Description = "Description2" }
         };
 
         mockDatabase.Setup(database => database.GetBookById(It.IsAny<Guid>()))
@@ -177,17 +177,17 @@ public class BookTests
     {
         // Arrange
         var mockDatabase = new Mock<IBookRepository>();
-        var mockBooksList = new List<BookModel>
+        var mockBooksList = new List<Book>
         {
-            new BookModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "Original Title", Description = "Original Description" },
-            new BookModel { Id = Guid.NewGuid(), Title = "Another Title", Description = "Another Description" }
+            new Book { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), Title = "Original Title", Description = "Original Description" },
+            new Book { Id = Guid.NewGuid(), Title = "Another Title", Description = "Another Description" }
         };
 
         mockDatabase.Setup(database => database.GetBookById(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid bookId) => mockBooksList.FirstOrDefault(book => book.Id == bookId));
 
-        mockDatabase.Setup(datebase => datebase.UpdateBook(It.IsAny<Guid>(), It.IsAny<BookModel>()))
-                    .Callback<Guid, BookModel>((bookId, updatedBook) =>
+        mockDatabase.Setup(datebase => datebase.UpdateBook(It.IsAny<Guid>(), It.IsAny<Book>()))
+                    .Callback<Guid, Book>((bookId, updatedBook) =>
                     {
                         var bookToUpdate = mockBooksList.FirstOrDefault(book => book.Id == bookId);
                         if (bookToUpdate != null)

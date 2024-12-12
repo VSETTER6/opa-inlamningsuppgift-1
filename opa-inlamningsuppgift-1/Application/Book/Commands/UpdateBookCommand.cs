@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Book.Commands
 {
-    public record UpdateBookCommand(Guid id, string title, string description) : IRequest<BookModel>;
+    public record UpdateBookCommand(Guid id, string title, string description) : IRequest<Domain.Models.Book>;
 }

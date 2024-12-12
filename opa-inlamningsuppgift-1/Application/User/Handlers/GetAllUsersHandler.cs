@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.User.Handlers
 {
-    public class GetAllUsersHandler : IRequestHandler<GetAllUsersQuery, List<UserModel>>
+    public class GetAllUsersHandler : IRequestHandler<GetAllUsersQuery, List<Domain.Models.User>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,7 +14,7 @@ namespace Application.User.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<List<UserModel>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<List<Domain.Models.User>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             try
             {

@@ -4,38 +4,38 @@ namespace Infrastructure.Database
 {
     public class FakeDatabase : IFakeDatabase
     {
-        private List<BookModel> bookModelList = new();
-        private List<AuthorModel> authorModelList = new();
-        private static List<UserModel> userModelList = new();
+        private List<Book> bookModelList = new();
+        private List<Author> authorModelList = new();
+        private static List<User> userModelList = new();
 
         public FakeDatabase()
         {
-            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Fun", Description = "Funny" });
-            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Mystery", Description = "Mystery" });
-            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title = "The Book of Action", Description = "Action" });
-            bookModelList.Add(new BookModel { Id = Guid.NewGuid(), Title =  "The Book of Fantasy", Description = "Fantasy" });
+            bookModelList.Add(new Book { Id = Guid.NewGuid(), Title = "The Book of Fun", Description = "Funny" });
+            bookModelList.Add(new Book { Id = Guid.NewGuid(), Title = "The Book of Mystery", Description = "Mystery" });
+            bookModelList.Add(new Book { Id = Guid.NewGuid(), Title = "The Book of Action", Description = "Action" });
+            bookModelList.Add(new Book { Id = Guid.NewGuid(), Title =  "The Book of Fantasy", Description = "Fantasy" });
 
-            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName =  "John", LastName = "Dough",  Category = "Comedy" } );
-            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
-            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Dick", LastName = "Doncaster", Category = "Action" });
-            authorModelList.Add(new AuthorModel { Id = Guid.NewGuid(), FirstName = "Peter", LastName = "Pele", Category = "Fantasy" });
+            authorModelList.Add(new Author { Id = Guid.NewGuid(), FirstName =  "John", LastName = "Dough",  Category = "Comedy" } );
+            authorModelList.Add(new Author { Id = Guid.NewGuid(), FirstName = "Sue", LastName = "Storm", Category = "Mystery" } );
+            authorModelList.Add(new Author { Id = Guid.NewGuid(), FirstName = "Dick", LastName = "Doncaster", Category = "Action" });
+            authorModelList.Add(new Author { Id = Guid.NewGuid(), FirstName = "Peter", LastName = "Pele", Category = "Fantasy" });
 
-            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Ville" });
-            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Hans" });
-            userModelList.Add(new UserModel { Id = Guid.NewGuid(), UserName = "Tuva" });
+            userModelList.Add(new User { Id = Guid.NewGuid(), UserName = "Ville" });
+            userModelList.Add(new User { Id = Guid.NewGuid(), UserName = "Hans" });
+            userModelList.Add(new User { Id = Guid.NewGuid(), UserName = "Tuva" });
         }
 
-        public List<BookModel> GetAllBooks()
+        public List<Book> GetAllBooks()
         {
             return bookModelList;
         }
 
-        public BookModel GetBookById(Guid id)
+        public Book GetBookById(Guid id)
         {
             return bookModelList.FirstOrDefault(book => book.Id == id);
         }
 
-        public void AddBook(BookModel newBook)
+        public void AddBook(Book newBook)
         {
             bookModelList.Add(newBook);
         }
@@ -60,7 +60,7 @@ namespace Infrastructure.Database
             }
         }
 
-        public void UpdateBook(BookModel updatedBook)
+        public void UpdateBook(Book updatedBook)
         {
             try
             {
@@ -93,17 +93,17 @@ namespace Infrastructure.Database
             }
         }
 
-        public List<AuthorModel> GetAllAuthors()
+        public List<Author> GetAllAuthors()
         {
             return authorModelList;
         }
 
-        public AuthorModel GetAuthorById(Guid id)
+        public Author GetAuthorById(Guid id)
         {
             return authorModelList.FirstOrDefault(author => author.Id == id);
         }
 
-        public void AddAuthor(AuthorModel newAuthor)
+        public void AddAuthor(Author newAuthor)
         {
             authorModelList.Add(newAuthor);
         }
@@ -128,7 +128,7 @@ namespace Infrastructure.Database
             }
         }
 
-        public void UpdateAuthor(AuthorModel updatedAuthor)
+        public void UpdateAuthor(Author updatedAuthor)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace Infrastructure.Database
             }
         }
 
-        public List<UserModel> Users
+        public List<User> Users
         {
             get { return userModelList; }
             set { userModelList = value; }

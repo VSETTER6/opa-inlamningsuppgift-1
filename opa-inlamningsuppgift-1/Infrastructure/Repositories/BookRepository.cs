@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories
             _realDatabase = realDatabase;
         }
 
-        public async Task AddBook(BookModel book)
+        public async Task AddBook(Book book)
         {
             await _realDatabase.Books.AddAsync(book);
             await _realDatabase.SaveChangesAsync();
@@ -33,12 +33,12 @@ namespace Infrastructure.Repositories
             await _realDatabase.SaveChangesAsync();
         }
 
-        public async Task<List<BookModel>> GetAllBooks()
+        public async Task<List<Book>> GetAllBooks()
         {
             return await _realDatabase.Books.ToListAsync();
         }
 
-        public async Task<BookModel> GetBookById(Guid id)
+        public async Task<Book> GetBookById(Guid id)
         {
             var book = await _realDatabase.Books.FirstOrDefaultAsync(book => book.Id == id);
 
@@ -50,7 +50,7 @@ namespace Infrastructure.Repositories
             return book;
         }
 
-        public async Task UpdateBook(Guid id, BookModel book)
+        public async Task UpdateBook(Guid id, Book book)
         {
             var existingBook = await _realDatabase.Books.FirstOrDefaultAsync(book => book.Id == id);
 

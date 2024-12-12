@@ -4,14 +4,14 @@ namespace Application.Interfaces.RepositoryInterfaces
 {
     public interface IBookRepository
     {
-        Task<List<BookModel>> GetAllBooks();
+        Task<List<Domain.Models.Book>> GetAllBooks();
 
-        Task<BookModel> GetBookById(Guid id);
+        Task<Domain.Models.Book> GetBookById(Guid id);
 
-        Task AddBook(BookModel book);
+        Task AddBook(Domain.Models.Book book);
 
         Task DeleteBook(Guid id);
 
-        Task UpdateBook(Guid id, BookModel book);
+        Task UpdateBook(Guid id, Domain.Models.Book book);
     }
 }

@@ -20,10 +20,10 @@ public class AuthorTests
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
 
-        List<AuthorModel> mockAuthorsList = new List<AuthorModel>
+        List<Author> mockAuthorsList = new List<Author>
         {
-            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new Author { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetAllAuthors()).ReturnsAsync(mockAuthorsList);
@@ -49,10 +49,10 @@ public class AuthorTests
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
 
-        var mockAuthorsList = new List<AuthorModel>
+        var mockAuthorsList = new List<Author>
         {
-            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new Author { Id = new Guid("b44c7c5d-b0bb-4d8c-bbf9-779d1c7c1295"), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
         mockDatabase.Setup(datebase => datebase.GetAuthorById(It.IsAny<Guid>()))
@@ -97,15 +97,15 @@ public class AuthorTests
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
 
-        var mockAuthorsList = new List<AuthorModel>
+        var mockAuthorsList = new List<Author>
         {
-            new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-            new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+            new Author { Id = Guid.NewGuid(), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+            new Author { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
         };
 
         mockDatabase.Setup(database => database.GetAllAuthors()).ReturnsAsync(mockAuthorsList);
-        mockDatabase.Setup(database => database.AddAuthor(It.IsAny<AuthorModel>()))
-                    .Callback<AuthorModel>(author => mockAuthorsList.Add(author));
+        mockDatabase.Setup(database => database.AddAuthor(It.IsAny<Author>()))
+                    .Callback<Author>(author => mockAuthorsList.Add(author));
 
         var handler = new AddAuthorHandler(mockDatabase.Object);
         var command = new AddAuthorCommand(firstName, lastName, category);
@@ -140,10 +140,10 @@ public class AuthorTests
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
 
-        var mockAuthorsList = new List<AuthorModel>
+        var mockAuthorsList = new List<Author>
     {
-        new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
-        new AuthorModel { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
+        new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "FirstName1", LastName = "LastName1", Category = "Category1"},
+        new Author { Id = Guid.NewGuid(), FirstName = "FirstName2", LastName = "LastName2", Category = "Category2"}
     };
 
         mockDatabase.Setup(database => database.GetAuthorById(It.IsAny<Guid>()))
@@ -177,17 +177,17 @@ public class AuthorTests
     {
         // Arrange
         var mockDatabase = new Mock<IAuthorRepository>();
-        var mockAuthorsList = new List<AuthorModel>
+        var mockAuthorsList = new List<Author>
         {
-            new AuthorModel { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "Original FirstName", LastName = "Original LastName", Category = "Orginal Category" },
-            new AuthorModel { Id = Guid.NewGuid(), FirstName = "Another FirstName", LastName = "Another LastName", Category = "Another Category" }
+            new Author { Id = new Guid("d3c85b8e-0d7b-4f5a-9638-df4b7d720c3f"), FirstName = "Original FirstName", LastName = "Original LastName", Category = "Orginal Category" },
+            new Author { Id = Guid.NewGuid(), FirstName = "Another FirstName", LastName = "Another LastName", Category = "Another Category" }
         };
 
         mockDatabase.Setup(database => database.GetAuthorById(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid authorId) => mockAuthorsList.FirstOrDefault(author => author.Id == authorId));
 
-        mockDatabase.Setup(datebase => datebase.UpdateAuthor(It.IsAny<Guid>(), It.IsAny<AuthorModel>()))
-                    .Callback<Guid, AuthorModel>((authorId, updatedAuthor) =>
+        mockDatabase.Setup(datebase => datebase.UpdateAuthor(It.IsAny<Guid>(), It.IsAny<Author>()))
+                    .Callback<Guid, Author>((authorId, updatedAuthor) =>
                     {
                         var authorToUpdate = mockAuthorsList.FirstOrDefault(author => author.Id == authorId);
                         if (authorToUpdate != null)

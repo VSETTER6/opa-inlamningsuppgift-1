@@ -16,7 +16,7 @@ namespace Application.Author.Handlers
 
         public async Task<Unit> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
-            AuthorModel author = await _authorRepository.GetAuthorById(request.id);
+            Domain.Models.Author author = await _authorRepository.GetAuthorById(request.id);
 
             if (author == null)
             {

@@ -16,7 +16,7 @@ namespace Application.Book.Handlers
 
         public async Task<Unit> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
-            BookModel book = await _bookRepository.GetBookById(request.id);
+            Domain.Models.Book book = await _bookRepository.GetBookById(request.id);
 
             if (book == null)
             {
