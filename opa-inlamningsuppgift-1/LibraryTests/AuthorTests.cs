@@ -1,6 +1,6 @@
-﻿using Application.Author.Commands;
-using Application.Author.Handlers;
-using Application.Author.Queries;
+﻿using Application.Authors.Commands;
+using Application.Authors.Handlers;
+using Application.Authors.Queries;
 using Application.Interfaces.RepositoryInterfaces;
 using Domain.Models;
 using Moq;

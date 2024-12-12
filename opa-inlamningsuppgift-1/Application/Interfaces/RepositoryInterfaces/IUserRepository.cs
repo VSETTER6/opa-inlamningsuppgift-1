@@ -4,16 +4,16 @@ namespace Application.Interfaces.RepositoryInterfaces
 {
     public interface IUserRepository
     {
-        Task<List<Domain.Models.User>> GetAllUsers();
+        Task<List<User>> GetAllUsers();
 
-        Task<Domain.Models.User> GetUserById(Guid id);
+        Task<User> GetUserById(Guid id);
 
-        Task AddUser(Domain.Models.User user);
+        Task AddUser(User user);
 
         Task DeleteUser(Guid id);
 
-        Task UpdateUser(Guid id, Domain.Models.User user);
+        Task UpdateUser(Guid id, User user);
 
-        Task<Domain.Models.User> GetUserByCredentials(string username, string password);
+        Task<User> GetUserByCredentials(string username, string password);
     }
 }
