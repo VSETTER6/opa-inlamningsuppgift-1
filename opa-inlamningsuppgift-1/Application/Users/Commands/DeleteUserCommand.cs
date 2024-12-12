@@ -1,6 +1,7 @@
-﻿using MediatR;
+﻿using Domain.Models;
+using MediatR;
 
 namespace Application.Users.Commands
 {
-    public record DeleteUserCommand(Guid id) : IRequest<Unit>;
+    public record DeleteUserCommand(Guid id) : IRequest<OperationResult<Unit>>;
 }

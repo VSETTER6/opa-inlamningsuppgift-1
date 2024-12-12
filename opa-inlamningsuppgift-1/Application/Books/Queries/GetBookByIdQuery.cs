@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Application.Books.Queries
 {
-    public record GetBookByIdQuery(Guid id) : IRequest<Book>;
+    public record GetBookByIdQuery(Guid id) : IRequest<OperationResult<Book>>;
 }

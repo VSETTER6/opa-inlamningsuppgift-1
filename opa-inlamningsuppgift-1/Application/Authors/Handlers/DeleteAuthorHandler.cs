@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Authors.Handlers
 {
-    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Unit>
+    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, OperationResult<Unit>>
     {
         private readonly IAuthorRepository _authorRepository;
 
@@ -14,23 +14,18 @@ namespace Application.Authors.Handlers
             _authorRepository = authorRepository;
         }
 
-        public async Task<Unit> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
-            Domain.Models.Author author = await _authorRepository.GetAuthorById(request.id);
+            Author author = await _authorRepository.GetAuthorById(request.id);
 
             if (author == null)
             {
-                throw new KeyNotFoundException($"Author with ID {request.id} was not found.");
+                return OperationResult<Unit>.Failed($"Author with ID {request.id} was not found.");
             }
-
-            try
+            else
             {
                 await _authorRepository.DeleteAuthor(request.id);
-                return Unit.Value;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while deleting the author. {ex}");
+                return OperationResult<Unit>.Successful(Unit.Value);
             }
         }
     }

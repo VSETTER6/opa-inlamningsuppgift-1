@@ -4,5 +4,5 @@ using MediatR;
 
 namespace Application.Users.Commands
 {
-    public record AddUserCommand(UserDto userDto) : IRequest<User>;
+    public record AddUserCommand(UserDto userDto) : IRequest<OperationResult<User>>;
 }

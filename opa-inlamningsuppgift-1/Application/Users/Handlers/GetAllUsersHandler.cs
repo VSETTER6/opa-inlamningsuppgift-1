@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Users.Handlers
 {
-    public class GetAllUsersHandler : IRequestHandler<GetAllUsersQuery, List<User>>
+    public class GetAllUsersHandler : IRequestHandler<GetAllUsersQuery, OperationResult<List<User>>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,16 +14,17 @@ namespace Application.Users.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<List<User>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<User>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            try
+            var users = await _userRepository.GetAllUsers();
+
+            if (users == null)
             {
-                var users = await _userRepository.GetAllUsers();
-                return users;
+                return OperationResult<List<User>>.Failed("An error occurred while getting the users.");
             }
-            catch (InvalidOperationException ex)
+            else
             {
-                throw new InvalidOperationException($"An error occurred while getting the users. {ex}");
+                return OperationResult<List<User>>.Successful(users);
             }
         }
     }

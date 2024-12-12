@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Books.Handlers
 {
-    public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, List<Book>>
+    public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, OperationResult<List<Book>>>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,16 +14,17 @@ namespace Application.Books.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<List<Book>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<List<Book>>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
         {
-            try
+            var books = await _bookRepository.GetAllBooks();
+
+            if (books == null)
             {
-                var books = await _bookRepository.GetAllBooks();
-                return books;
+                return OperationResult<List<Book>>.Failed("An error occurred while getting the books.");
             }
-            catch (InvalidOperationException ex)
+            else
             {
-                throw new InvalidOperationException($"An error occurred while getting the books. {ex}");
+                return OperationResult<List<Book>>.Successful(books);
             }
         }
     }

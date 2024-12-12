@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Users.Handlers
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserCommand, OperationResult<Unit>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,23 +14,18 @@ namespace Application.Users.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Unit>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            Domain.Models.User user = await _userRepository.GetUserById(request.id);
+            User user = await _userRepository.GetUserById(request.id);
 
             if (user == null)
             {
-                throw new KeyNotFoundException($"User with ID {request.id} was not found.");
+                return OperationResult<Unit>.Failed($"User with ID {request.id} was not found.");
             }
-
-            try
+            else
             {
                 await _userRepository.DeleteUser(request.id);
-                return Unit.Value;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException($"An error occurred while deleting the user. {ex}");
+                return OperationResult<Unit>.Successful(Unit.Value);
             }
         }
     }

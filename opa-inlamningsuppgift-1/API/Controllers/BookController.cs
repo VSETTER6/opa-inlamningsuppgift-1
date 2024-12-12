@@ -1,5 +1,6 @@
 ﻿using Application.Books.Commands;
 using Application.Books.Queries;
+using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +24,16 @@ namespace API.Controllers
         {
             try
             {
-                var result = await _mediator.Send(command);
+                var operationResult = await _mediator.Send(command);
 
-                return CreatedAtAction(nameof(GetBookById), new { id = result.Id }, result);
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -39,9 +47,16 @@ namespace API.Controllers
         {
             try
             {
-                await _mediator.Send(new DeleteBookCommand(id));
+                var operationResult = await _mediator.Send(new DeleteBookCommand(id));
 
-                return Ok($"Book has been successfully deleted.");
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -55,8 +70,16 @@ namespace API.Controllers
         {
             try
             {
-                var books = await _mediator.Send(new GetAllBooksQuery());
-                return Ok(books);
+                var operationResult = await _mediator.Send(new GetAllBooksQuery());
+
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -70,8 +93,16 @@ namespace API.Controllers
         {
             try
             {
-                var book = await _mediator.Send(new GetBookByIdQuery(id));
-                return Ok(book);
+                var operationResult = await _mediator.Send(new GetBookByIdQuery(id));
+
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -85,9 +116,16 @@ namespace API.Controllers
         {
             try
             {
-                await _mediator.Send(command);
+                var operationResult = await _mediator.Send(command);
 
-                return Ok($"Book with ID {id} has been successfully updated.");
+                if (operationResult.Success)
+                {
+                    return Ok(new { message = operationResult.Message, data = operationResult.Data });
+                }
+                else
+                {
+                    return BadRequest(new { message = operationResult.Message, errors = operationResult.ErrorMessage });
+                }
             }
             catch (InvalidOperationException ex)
             {

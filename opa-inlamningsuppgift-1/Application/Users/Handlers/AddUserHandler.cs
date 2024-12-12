@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Users.Handlers
 {
-    internal sealed class AddUserHandler : IRequestHandler<AddUserCommand, User>
+    internal sealed class AddUserHandler : IRequestHandler<AddUserCommand, OperationResult<User>>
     {
         private readonly IUserRepository _userRepository;
 
@@ -14,16 +14,15 @@ namespace Application.Users.Handlers
             _userRepository = userRepository;
         }
 
-        public async Task<User> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<User>> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.userDto.Username) || string.IsNullOrWhiteSpace(request.userDto.Password))
             {
-                throw new ArgumentException("None of username or password can be empty.");
+                return OperationResult<User>.Failed("None of username or password can be empty.");
             }
-
-            try
+            else
             {
-                User newUser = new Domain.Models.User
+                User newUser = new User
                 {
                     Id = Guid.NewGuid(),
                     UserName = request.userDto.Username,
@@ -31,11 +30,7 @@ namespace Application.Users.Handlers
                 };
 
                 await _userRepository.AddUser(newUser);
-                return newUser;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"An error occurred while adding the user. {ex}");
+                return OperationResult<User>.Successful(newUser);
             }
         }
     }

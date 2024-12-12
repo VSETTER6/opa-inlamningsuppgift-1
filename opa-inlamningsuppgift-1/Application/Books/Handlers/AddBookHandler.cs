@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Books.Handlers
 {
-    public class AddBookHandler : IRequestHandler<AddBookCommand, Book>
+    public class AddBookHandler : IRequestHandler<AddBookCommand, OperationResult<Book>>
     {
         private readonly IBookRepository _bookRepository;
 
@@ -14,16 +14,15 @@ namespace Application.Books.Handlers
             _bookRepository = bookRepository;
         }
 
-        public async Task<Book> Handle(AddBookCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Book>> Handle(AddBookCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.title) || string.IsNullOrWhiteSpace(request.description))
             {
-                throw new ArgumentException("None of title or description can be empty.");
+                return OperationResult<Book>.Failed("None of title or description can be empty.");
             }
-
-            try
+            else
             {
-                Book newBook = new Domain.Models.Book
+                Book newBook = new Book
                 {
                     Id = Guid.NewGuid(),
                     Title = request.title,
@@ -31,11 +30,7 @@ namespace Application.Books.Handlers
                 };
 
                 await _bookRepository.AddBook(newBook);
-                return newBook;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"An error occurred while adding the book. {ex}");
+                return OperationResult<Book>.Successful(newBook);
             }
         }
     }
