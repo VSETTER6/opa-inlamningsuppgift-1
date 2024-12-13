@@ -1,4 +1,7 @@
-﻿namespace Domain.Models
+﻿
+using Serilog;
+
+namespace Domain.Models
 {
     public class OperationResult<T>
     {
@@ -16,6 +19,8 @@
             Message = message;
             Data = data;
             ErrorMessage = errorMessage;
+
+            LogOperation();
         }
 
         public static OperationResult<T> Successful(T data, string message = "Operation successful.")
@@ -26,6 +31,18 @@
         public static OperationResult<T> Failed(string errorMessage, string message = "Operation failed.")
         {
             return new OperationResult<T>(false, default, message, errorMessage);
+        }
+
+        private void LogOperation()
+        {
+            if (IsSuccessful)
+            {
+                Log.Information("OperationResult created successfully. Message: {Message}, Data: {Data}", Message, Data);
+            }
+            else
+            {
+                Log.Error("OperationResult creation failed. ErrorMessage: {ErrorMessage}, Message: {Message}", ErrorMessage, Message);
+            }
         }
     }
 }
