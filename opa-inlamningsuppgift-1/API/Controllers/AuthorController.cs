@@ -1,6 +1,5 @@
 ﻿using Application.Authors.Commands;
 using Application.Authors.Queries;
-using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
